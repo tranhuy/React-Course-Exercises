@@ -1,7 +1,5 @@
-import ReactDOM from 'react-dom'
-import App from './App'
+import ReactDOM from "react-dom";
+import App from "./App";
+import Part1d from "./Part1d";
 
-ReactDOM.render(
-  <App />,
-  document.getElementById('root')
-)
+ReactDOM.render(<Part1d />, document.getElementById("root"));
