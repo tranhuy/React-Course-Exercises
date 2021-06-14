@@ -100,25 +100,29 @@ app.delete('/api/persons/:id', (request, response, next) => {
     response.status(204).end(); */
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const body = request.body;
 
-    if (!body.name) {
+    /* if (!body.name) {
         return response.status(400).json({ error: 'name is missing' })
     }
 
     if (!body.phone) {
         return response.status(400).json({ error: 'phone is missing' })
     }
-
+ */
     let newContact = new Contact({
         name: body.name,
         phone: body.phone
     })
 
-    newContact.save().then(savedContact => {
-        response.json(savedContact)
-    })
+    newContact.save()
+        .then(savedContact => {
+            response.json(savedContact)
+        })
+        .catch(err => {
+            next(err)
+        })
 
     /* if (phonebook.filter(p => p.name === body.name).length > 0) {
         return response.status(400).json({ error: 'name must be unique' })
@@ -143,9 +147,13 @@ app.put('/api/persons/:id', (request, response, next) => {
         phone: body.phone
     }
 
-    Contact.findByIdAndUpdate(request.params.id, contact, { new: true })
+    Contact.findByIdAndUpdate(request.params.id, contact, { new: true, runValidators: true, context: 'query' })
         .then(updatedContact => {
-            response.json(updatedContact)
+            if (updatedContact) {
+                response.json(updatedContact)
+            } else {
+                response.status(500).json({ error:  `Contact ${contact.name} has already been removed from server` })
+            }           
         })
         .catch(err => {
             next(err)
@@ -164,7 +172,9 @@ const errorHandler = (err, req, res, next) => {
 
     if (err.name === 'CastError') {
         return res.status(400).send({ error: 'malformatted id' })
-    } 
+    } else if (err.name === 'ValidationError') {
+        return res.status(400).json({ error: err.message })
+    }
 
     next(err)
 }

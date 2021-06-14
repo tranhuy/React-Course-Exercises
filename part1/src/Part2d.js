@@ -60,7 +60,8 @@ const PersonForm = ({persons, updatePersons, displayMessage}) => {
                     })
                     .catch(err => {
                         contactsService.getContacts().then(contacts => updatePersons(contacts));
-                        displayMessage({ message : `Contact ${newName} has already been removed from server`, isError : true });
+                        displayMessage({ message : err.response.data.error, isError : true });                        
+                        //displayMessage({ message : `Contact ${newName} has already been removed from server`, isError : true });
                     })
                     .finally(() => {
                         setNewName('');
@@ -81,6 +82,10 @@ const PersonForm = ({persons, updatePersons, displayMessage}) => {
                 setNewName('');
                 setNewPhone('');
                 displayMessage({ message : `${newName} was successfully added to the phonebook`, isError : false });
+            })
+            .catch(err => {
+                displayMessage({ message : err.response.data.error, isError : true });
+                console.log(err.response.data)
             })
     }   
 

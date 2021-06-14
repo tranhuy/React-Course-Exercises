@@ -1,12 +1,16 @@
+GET http://localhost:3001/info
+
+###
+
 GET http://localhost:3001/api/persons
 
 ###
 
-GET http://localhost:3001/api/persons/5
+GET http://localhost:3001/api/persons/60c3f677b0a440315caa463b
 
 ###
 
-DELETE http://localhost:3001/api/persons/3
+DELETE http://localhost:3001/api/persons/60c7841309e9631a2c176446
 
 ###
 
@@ -14,6 +18,16 @@ POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-    "name": "Rachel Tran",
-    "phone": "647-934-2234"
+    "name": "DK",
+    "phone": "613-442-5466"
+}
+
+###
+
+PUT http://localhost:3001/api/persons/60c3f63b49953e17849429ba
+Content-Type: application/json
+
+{
+    "name": "Huy Tran",
+    "phone": "613-442-5466"
 }
