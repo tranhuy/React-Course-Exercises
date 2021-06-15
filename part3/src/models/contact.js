@@ -23,7 +23,7 @@ const contactSchema = new mongoose.Schema({
     phone: { 
         type: String, 
         required: true,
-        minLength: [8, 'Most be at least 8 characters, got {VALUE}']       
+        minLength: [8, 'Must be at least 8 characters, got {VALUE}']       
     }
 })
 

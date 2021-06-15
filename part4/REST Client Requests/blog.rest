@@ -1,0 +1,17 @@
+GET http://localhost:3001/blogs
+
+###
+
+GET http://localhost:3001/blogs/
+
+###
+
+POST http://localhost:3001/blogs
+Content-Type: application/json
+
+{
+    "title": "Coding with React",
+    "author": "Huy Tran",
+    "url": "www.huytran.com",
+    "lkes": 2
+}
