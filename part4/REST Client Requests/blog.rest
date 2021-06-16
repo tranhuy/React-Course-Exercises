@@ -2,7 +2,7 @@ GET http://localhost:3001/blogs
 
 ###
 
-GET http://localhost:3001/blogs/
+GET http://localhost:3001/blogs/60c8eddb2750d5628ce4d6a7
 
 ###
 
@@ -10,8 +10,8 @@ POST http://localhost:3001/blogs
 Content-Type: application/json
 
 {
-    "title": "Coding with React",
+    "title": "A day in the life of",
     "author": "Huy Tran",
     "url": "www.huytran.com",
-    "lkes": 2
+    "lkes": 5
 }
