@@ -1,58 +1,93 @@
-const { text } = require('express')
+const supertest = require('supertest')
+const mongoose = require('mongoose')
+const app = require('../app')
+const Blog = require('../models/blog')
+const blogHelper = require('../utils/blog_helper')
 const listHelper = require('../utils/list_helper')
 
-const blogs = [
-  {
-    _id: "5a422b891b54a676234d17fa",
-    title: "First class tests",
-    author: "Robert C. Martin",
-    url: "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
-    likes: 10,
-    __v: 0
-  },
-  {
-    _id: "5a422ba71b54a676234d17fb",
-    title: "TDD harms architecture",
-    author: "Robert C. Martin",
-    url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
-    likes: 20,
-    __v: 0
-  },
-  {
-    _id: "5a422bc61b54a676234d17fc",
-    title: "Type wars",
-    author: "Robert C. Martin",
-    url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
-    likes: 2,
-    __v: 0
-  },  
-  {
-    _id: "5a422a851b54a676234d17f7",
-    title: "React patterns",
-    author: "Michael Chan",
-    url: "https://reactpatterns.com/",
-    likes: 7,
-    __v: 0
-  },
-  {
-    _id: "5a422aa71b54a676234d17f8",
-    title: "Go To Statement Considered Harmful",
-    author: "Edsger W. Dijkstra",
-    url: "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
-    likes: 5,
-    __v: 0
-  },
-  {
-    _id: "5a422b3a1b54a676234d17f9",
-    title: "Canonical string reduction",
-    author: "Edsger W. Dijkstra",
-    url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
-    likes: 12,
-    __v: 0
-  }
-]
+const api = supertest(app)
 
-describe('total likes', () => {
+beforeEach(async () => {
+  await Blog.deleteMany({})
+  console.log('DB cleared')
+
+  await Blog.insertMany(blogHelper.testBlogs)
+
+  // let blogObjects = blogHelper.testBlogs.map(blog => new Blog(blog))
+  // let promises = blogObjects.map(blog => blog.save())
+  // await Promise.all(promises)
+})
+
+test('blogs are returned as json', async () => {
+  await api
+    .get('/api/blogs/')
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+})
+
+test('all blogs are returned', async () => {
+  const response = await api.get('/api/blogs')
+
+  expect(response.body).toHaveLength(blogHelper.testBlogs.length)
+})
+
+test('valid blog can be added', async () => {
+  let newBlog = {
+        title: "The rise and rise of Bitcoin",
+        author: "Huy Tran",
+        url: "https://www.coindesk.com/",
+        likes: 100
+  }
+
+  const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+    const updatedBlogs = await blogHelper.blogsInDb()
+    expect(updatedBlogs).toHaveLength(blogHelper.testBlogs.length + 1)
+    expect(response.body).toEqual(JSON.parse(JSON.stringify(updatedBlogs[blogHelper.testBlogs.length])))
+})
+
+test('blog without likes can be added and defaults to 0', async () => {
+  let newBlog = {
+    title: "Creation of Wealth",
+    author: "Julie Tang",
+    url: "https://www.coindesk.com/",
+  }
+
+  const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+    const updatedBlogs = await blogHelper.blogsInDb()
+    expect(updatedBlogs).toHaveLength(blogHelper.testBlogs.length + 1)
+    expect(response.body.likes).toEqual(0)
+})
+
+test('blog without title and url cannot be added', async() => {
+  let newBlog = {
+    author: "Julie Tang",
+    likes: 25
+  }
+
+  const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+
+    const updatedBlogs = await blogHelper.blogsInDb()
+    expect(updatedBlogs).toHaveLength(blogHelper.testBlogs.length)
+})
+
+afterAll(() => {
+  mongoose.connection.close()
+})
+
+/* describe('total likes', () => {
       test('sum all blog likes', () => {
           const result = listHelper.totalLikes(blogs)
           expect(result).toBe(36)
@@ -94,4 +129,4 @@ describe('most popular author', () => {
     const result = listHelper.mostLikes(blogs)
     expect(result).toEqual(author)
   })
-})
+}) */
