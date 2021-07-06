@@ -2,10 +2,24 @@ const supertest = require('supertest')
 const mongoose = require('mongoose')
 const app = require('../app')
 const Blog = require('../models/blog')
-const blogHelper = require('../utils/blog_helper')
+const blogHelper = require('../utils/test_helper')
 const listHelper = require('../utils/list_helper')
 
 const api = supertest(app)
+
+let token
+
+beforeAll(async () => {
+   await api
+    .post('/api/login')
+    .send({
+      username: 'tranhuy',
+      password: 'password'
+    })
+    .then((res) => {
+      token = res.body.token
+    })
+})
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -41,6 +55,7 @@ test('valid blog can be added', async () => {
 
   const response = await api
     .post('/api/blogs')
+    .set('Authorization', `bearer ${token}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -81,6 +96,24 @@ test('blog without title and url cannot be added', async() => {
 
     const updatedBlogs = await blogHelper.blogsInDb()
     expect(updatedBlogs).toHaveLength(blogHelper.testBlogs.length)
+})
+
+test('adding blog fails without token', async() => {
+  let newBlog = {
+    title: "To Da Moon",
+    author: "Huy Tran",
+    url: "https://www.coindesk.com/",
+    likes: 23
+  }
+
+  const response = await api
+  .post('/api/blogs')
+  .send(newBlog)
+  .expect(401)
+  .expect('Content-Type', /application\/json/)
+
+  const updatedBlogs = await blogHelper.blogsInDb()
+  expect(updatedBlogs).toHaveLength(blogHelper.testBlogs.length)
 })
 
 afterAll(() => {
