@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const blogsRouter = require('express').Router()
+const middleware = require('../utils/middleware')
 //const { response } = require('express')
 const Blog = require('../models/blog')
 const User = require('../models/user')
@@ -43,7 +44,7 @@ blogsRouter.get('/:id', async (req, res, next) => {
     //     .catch(err => next(err))
 })
 
-blogsRouter.post('/', async (req, res, next) => {
+blogsRouter.post('/', middleware.userExtractor, async (req, res, next) => {
     //const token = getTokenFrom(req)
     //const decodedToken = jwt.verify(req.token, process.env.SECRET)
 
