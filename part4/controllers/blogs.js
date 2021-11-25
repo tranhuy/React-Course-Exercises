@@ -71,7 +71,7 @@ blogsRouter.post('/', middleware.userExtractor, async (req, res, next) => {
     //     .catch(err => next(err))
 })
 
-blogsRouter.delete('/:id', async (req, res, next) => {
+blogsRouter.delete('/:id', middleware.userExtractor, async (req, res, next) => {
     //const decodedToken = jwt.verify(req.token, process.env.SECRET)
     const blogToDelete = await Blog.findById(req.params.id)
     const blogOwnerId = await blogToDelete.user.toString()
@@ -98,9 +98,10 @@ blogsRouter.delete('/:id', async (req, res, next) => {
 })
 
 blogsRouter.put('/:id', async (req, res, next) => {
-    const {title, author, url, likes } = req.body
+    const {user, title, author, url, likes } = req.body
 
     let blog = {
+        user: user,
         title: title,
         author: author,
         url: url,

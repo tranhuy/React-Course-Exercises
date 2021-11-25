@@ -1,18 +1,22 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [ notification, setNotification ] = useState({message : null, isError : false})
+  const [notification, setNotification] = useState({message : null, isError : false})
+
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs(blogs)
+      setBlogs(blogs.sort((b1, b2) => (b1.likes > b2.likes) ? 1: -1))
     )  
   }, [])
 
@@ -46,6 +50,46 @@ const App = () => {
   const logoutUser = () => {
     window.localStorage.removeItem('loggedInUser')
     setUser(null)
+  }
+
+  // javascript currying function
+  const addNewBlog = (newBlog) => async (event) => {
+    event.preventDefault()
+
+    try {
+      const blog = await blogService.create(newBlog)
+
+      setBlogs(blogs.concat(blog))
+      setNotification({ message: `New Blog: ${blog.title} by ${blog.author} was successfully added`, isError: false })
+      blogFormRef.current.toggleVisibility()
+    } catch (err) {
+      setNotification({ message: err.message, isError: true })
+      console.log(err)
+    }
+  }
+
+  const updateBlog = async (modifiedBlog) => {
+    try {
+      const blog = await blogService.updateBlog(modifiedBlog.id, modifiedBlog)
+      return blog
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const deleteBlog = async (blogToDelete) => {
+    try {
+      const blog = await blogService.deleteBlog(blogToDelete.id)
+      setBlogs(blogs.filter(blog => blog != blogToDelete))
+    } catch (err) {
+      setNotification({ message: err.message, isError: true })
+      console.log(err)
+    }
+  }
+
+  let blogActions = {
+    update : updateBlog,
+    delete: deleteBlog
   }
 
   const loginForm = () => { 
@@ -82,58 +126,20 @@ const App = () => {
             <h4>{user.name} logged in </h4>
             <button onClick={logoutUser}>Logout</button>
           </div>
-          <BlogForm blogs={blogs} setBlogs={setBlogs} setNotification={setNotification}></BlogForm>
+
+          <Togglable buttonLabel="Create New Blog" ref={blogFormRef}>
+              <BlogForm submitAction={addNewBlog}></BlogForm>
+          </Togglable>
+          
           <section style={{marginTop: '10px'}}>
-            {blogs.map(blog =>
-              <Blog key={blog.id} blog={blog} />
+            {blogs.map(blog => 
+              <Blog key={blog.id} blog={blog} blogActions={blogActions} canDelete={user.id == blog.user.id} />
             )}
           </section>
         </div>       
       </>
     )
   }
-}
-
-const BlogForm = ({ blogs, setBlogs, setNotification }) => {
-  const [newBlog, setNewBlog] = useState({title: '', author: '', url: ''})
-
-  const addNewBlog = async (event) => {
-    event.preventDefault()
-
-    try {
-      const blog = await blogService.create(newBlog)
-
-      setBlogs(blogs.concat(blog))
-      setNewBlog({title: '', author: '', url: ''})
-      setNotification({ message: `New Blog: ${blog.title} by ${blog.author} was successfully added`, isError: false })
-    } catch (err) {
-      setNotification({ message: err.message, isError: true })
-      console.log(err)
-    }
-  }
-
-  return (
-      <>
-          <h3>Create New Blog</h3>
-          <form onSubmit={addNewBlog}>
-            <table>
-                <tr>
-                  <td>Title:</td>
-                  <td><input type="text" value={newBlog.title} name="Title" onChange={({target}) => setNewBlog({...newBlog, title: target.value})} /></td>
-                </tr>
-                <tr>
-                  <td>Author:</td>
-                  <td><input type="text" value={newBlog.author} name="Author" onChange={({target}) => setNewBlog({...newBlog, author: target.value})} /></td>
-                </tr>
-                <tr>
-                  <td>Url:</td>
-                  <td><input type="text" value={newBlog.url} name="Url" onChange={({target}) => setNewBlog({...newBlog, url: target.value})} /></td>
-                </tr>
-              </table>
-              <button type="submit">Create</button>
-          </form>
-      </>
-  )
 }
 
 const Notification = ({message, isError, displayMessage}) => {

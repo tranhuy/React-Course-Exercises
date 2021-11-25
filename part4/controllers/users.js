@@ -33,4 +33,31 @@ usersRouter.post('/', async (req, res, next) => {
     res.json(savedUser)
 })
 
+// update password
+usersRouter.put('/:id', async (req, res, next) => {
+    const password = req.body.password
+
+    if (!password) {
+        return res.status(400).json({ error: 'password missing' })
+    }
+
+    const saltRounds = 10
+    const passwordHash = await bcrypt.hash(password, saltRounds)
+    const user = await User.findById(req.params.id)
+
+    let modifiedUser = {
+        username: user.username,
+        name: user.name,
+        passwordHash
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, modifiedUser, { new: true, runValidators: true, context: 'query' })
+
+    if (updatedUser) {
+        res.json(updatedUser)
+    } else {
+        res.status(404).send('User not found')
+    }    
+})
+
 module.exports = usersRouter
