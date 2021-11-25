@@ -4,6 +4,7 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
+import LoginForm from './components/LoginForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -29,6 +30,14 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
+
+  const handleUsernameChange = (val) => {
+    setUsername(val)
+  }
+
+  const handlePasswordChange = (val) => {
+    setPassword(val)
+  }
 
   const loginUser = async (event) => {
     event.preventDefault()
@@ -92,30 +101,13 @@ const App = () => {
     delete: deleteBlog
   }
 
-  const loginForm = () => { 
-    return (
-        <>
-            <Notification message={notification.message} isError={notification.isError} displayMessage={setNotification}></Notification>
-            <h2>User Login</h2>
-            <form onSubmit={loginUser}>
-                <table>
-                  <tr>
-                    <td>Username:</td>
-                    <td><input type="text" value={username} name="Username" onChange={({target}) => setUsername(target.value)} /></td>
-                  </tr>
-                  <tr>
-                    <td>Password:</td>
-                    <td><input type="password" value={password} name="Password" onChange={({target}) => setPassword(target.value)} /></td>
-                  </tr>
-                </table>
-                <button type="submit">Login</button>
-            </form>
-        </>
-    )
-  }
-
   if (user === null) {
-    return loginForm()
+    return (
+      <>
+        <Notification message={notification.message} isError={notification.isError} displayMessage={setNotification}></Notification>
+        <LoginForm handleSubmit={loginUser} handleUsernameChange={handleUsernameChange} handlePasswordChange={handlePasswordChange} username={username} password={password}></LoginForm>
+      </>
+    )
   } else {
     return (
       <>
