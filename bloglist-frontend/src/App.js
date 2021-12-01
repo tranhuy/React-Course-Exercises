@@ -7,7 +7,6 @@ import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
 
 const App = () => {
-  const [newBlog, setNewBlog] = useState({title: '', author: '', url: ''}) 
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
