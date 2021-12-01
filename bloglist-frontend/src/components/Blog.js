@@ -33,13 +33,13 @@ return (
     {
       showBlogDetails ? 
         <table>
-          <tr><td>{blog.title}</td></tr>
-          <tr><td>{blog.url}</td></tr>
-          <tr><td>{blog.likes} <button onClick={incrementLikes}>Like</button></td></tr>
-          <tr><td>{blog.author}</td></tr>
+          <tr className='title'><td>{blog.title}</td></tr>
+          <tr className='url'><td>{blog.url}</td></tr>
+          <tr className='likes'><td>{blog.likes} <button onClick={incrementLikes}>Like</button></td></tr>
+          <tr className='author'><td>{blog.author}</td></tr>
           {canDelete && <tr><td><button onClick={deleteBlog}>Delete Blog</button></td></tr>}
         </table>
-      : <div>{blog.title} {blog.author}</div>
+      : <div><span className='title'>{blog.title}</span> <span className='author'>{blog.author}</span></div>
     }
     <div><button onClick={toggleDetails}>{showBlogDetails ? "Hide" : "View"}</button></div>
   </div>  
