@@ -29,7 +29,7 @@ const deleteBlog = () => {
 }
 
 return (
-  <div style={blogStyle}>
+  <div className='blog' style={blogStyle}>
     {
       showBlogDetails ? 
         <table>
@@ -39,9 +39,11 @@ return (
           <tr className='author'><td>{blog.author}</td></tr>
           {canDelete && <tr><td><button onClick={deleteBlog}>Delete Blog</button></td></tr>}
         </table>
-      : <div><span className='title'>{blog.title}</span> <span className='author'>{blog.author}</span></div>
+      : <table>
+          <tr className='title'><td>{blog.title}</td><td>{blog.author}</td></tr>
+        </table>
     }
-    <div><button onClick={toggleDetails}>{showBlogDetails ? "Hide" : "View"}</button></div>
+    <div><button data-cy='toggleDetails' onClick={toggleDetails}>{showBlogDetails ? "Hide" : "View"}</button></div>
   </div>  
 )}
 

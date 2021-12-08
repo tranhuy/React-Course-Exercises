@@ -84,13 +84,17 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (req, res, next) => {
     //     return res.status(403).json({ error: 'user with provided token does not have permission to delete blog' })
     // }   
 
-    if (blogOwnerId !== req.user.id) {
+    let user = req.user
+    user.blogs = user.blogs.filter(blog => blog != blogToDelete.id)
+
+    if (blogOwnerId !== user.id) {
         return res.status(403).json({ error: 'user with provided token does not have permission to delete blog' })
     }
  
     const deletedBlog = await Blog.findByIdAndRemove(req.params.id)
 
     if (deletedBlog) {
+        await user.save()  //update blogs array in users table
         res.status(204).end()
     } else {
         res.status(404).send('Blog not found')

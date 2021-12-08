@@ -17,12 +17,12 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs(blogs.sort((b1, b2) => (b1.likes > b2.likes) ? 1: -1))
+      setBlogs(blogs.sort((b1, b2) => (b1.likes > b2.likes) ? -1: 1))
     )  
   }, [])
 
   useEffect(() => {
-    const loggedInUserJSON = window.localStorage.getItem('loggedInUser')
+    const loggedInUserJSON = window.localStorage.getItem('loggedInBlogUser')
 
     if (loggedInUserJSON) {
       const user = JSON.parse(loggedInUserJSON)
@@ -45,7 +45,7 @@ const App = () => {
     try {
       const user = await loginService.login({username, password})
       
-      window.localStorage.setItem('loggedInUser', JSON.stringify(user))
+      window.localStorage.setItem('loggedInBlogUser', JSON.stringify(user))
       blogService.setToken(user.token)
 
       setUser(user)
