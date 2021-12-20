@@ -1,23 +1,25 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { incrementVotes, orderByVotes } from '../reducers/anecdoteReducer'
+import { voteAnecdote, orderByVotes } from '../reducers/anecdoteReducer'
 import { showNotification } from '../reducers/notificationReducer'
 
 const AnecdoteList = () => {
-
-    const anecdotes = useSelector(state => {
-            return !state.filter ? state.anecdotes : state.anecdotes.filter(anecdote => anecdote.content.toLowerCase().includes(state.filter.toLowerCase()))        
-        })
-
     const dispatch = useDispatch()
 
-    const vote = (id, content) => {
-        console.log('vote', id)
-    
-        dispatch(incrementVotes(id))
-        dispatch(orderByVotes())
+    const anecdotes = useSelector(({filter, anecdotes}) => {
+            return !filter ? anecdotes : anecdotes.filter(anecdote => anecdote.content.toLowerCase().includes(filter.toLowerCase()))        
+        })
 
-        showNotification(dispatch, `You voted for ${content}`)
+    const vote = async (anecdote) => {
+        console.log('vote', anecdote.id)
+    
+        //since voteAnecdote uses thunk, need to wait for it to complete first before dispatching SORT_BY_VOTES and DISPLAY_NOTIFICATION actions
+        await dispatch(voteAnecdote(anecdote))
+        dispatch(orderByVotes())
+        dispatch(showNotification(`You voted for ${anecdote.content}`, 3))
+
+        //showNotification(dispatch, `You voted for ${anecdote.content}`)
+        
         // dispatch(setNofication(`You voted for ${content}`))
 
         // setTimeout(() => {
@@ -34,7 +36,7 @@ const AnecdoteList = () => {
                     </div>
                     <div>
                         <span>has {anecdote.votes} </span>
-                        <button onClick={() => vote(anecdote.id, anecdote.content)}>vote</button>
+                        <button onClick={() => vote(anecdote)}>vote</button>
                     </div>
                 </div>)
             : 'No Results Found'

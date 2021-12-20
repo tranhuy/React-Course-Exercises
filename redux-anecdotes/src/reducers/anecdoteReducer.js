@@ -1,3 +1,5 @@
+import anecdoteService from '../services/anecdotes'
+
 const anecdotesAtStart = [
   'If it hurts, do it more often',
   'Adding manpower to a late software project makes it later!',
@@ -17,21 +19,34 @@ const asObject = (anecdote) => {
   }
 }
 
-export const incrementVotes = (id) => {
-  return {
-    type: 'VOTE',
-    data: { id }
+export const voteAnecdote = (anecdote) => {
+  return async dispatch => {
+    const updatedAnecdote = await anecdoteService.update(anecdote.id, {...anecdote, votes: anecdote.votes + 1})
+    dispatch({
+      type: 'VOTE',
+      data: updatedAnecdote
+    })    
   }
 }
 
 export const createAnecdote = (content) => {
-  return {
-    type: 'NEW_ANECDOTE',
-    data: {
-      content: content,
-      id: getId(),
-      votes: 0
-    }
+  return async dispatch => {
+    const anecdote = await anecdoteService.createNew(content)
+    dispatch({
+      type: 'NEW_ANECDOTE',
+      data: anecdote
+    })    
+  }
+}
+
+export const initializeAnecdotes = () => {
+  return async dispatch => {
+    const anecdotes = await anecdoteService.getAll()
+    dispatch({
+      type: 'INIT_ANECDOTES',
+      data: anecdotes
+    })
+    dispatch(orderByVotes())
   }
 }
 
@@ -43,19 +58,22 @@ export const orderByVotes = () => {
 
 const initialState = anecdotesAtStart.map(asObject)
 
-const reducer = (state = initialState, action) => {
+const reducer = (state = [], action) => {
   console.log('state now: ', state)
   console.log('action', action)
 
   switch (action.type) {
     case 'VOTE': 
-      const id = action.data.id
-      const anecdoteToChange = state.find(a => a.id === id)
-      const changedAnecdote = {
-        ...anecdoteToChange, votes: anecdoteToChange.votes + 1      
-      }
-      
-      return state.map(anecdote => anecdote.id !== id ? anecdote : changedAnecdote)
+      // const id = action.data.id
+      // const anecdoteToChange = state.find(a => a.id === id)
+      // const changedAnecdote = {
+      //   ...anecdoteToChange, votes: anecdoteToChange.votes + 1      
+      // }
+      const changedAnecdote = action.data
+
+      return state.map(anecdote => anecdote.id !== changedAnecdote.id ? anecdote : changedAnecdote)
+    case 'INIT_ANECDOTES':
+      return action.data
     case 'NEW_ANECDOTE':
       return [...state, action.data]
     case 'SORT_BY_VOTES': 

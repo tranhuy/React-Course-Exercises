@@ -14,17 +14,32 @@ export const removeNotification = () => {
 
 let notificationTimerId 
 
-export const showNotification = (dispatch, message) => {
+// export const showNotification = (dispatch, message) => {
 
+//     //need to first clear any notifications that are queued to be hidden
+//     clearTimeout(notificationTimerId)
+
+//     dispatch(setNofication(message))
+
+//     //remove currently active notification after 3s
+//     notificationTimerId = setTimeout(() => {
+//         dispatch(removeNotification())
+//     }, 3000);
+// }
+
+export const showNotification = (message, delay) => {
     //need to first clear any notifications that are queued to be hidden
-    clearTimeout(notificationTimerId)
-
-    dispatch(setNofication(message))
-
-    //remove currently active notification after 3s
-    notificationTimerId = setTimeout(() => {
+    if (notificationTimerId) {
+        clearTimeout(notificationTimerId)
+    }
+    
+    return async dispatch => {
+        dispatch(setNofication(message))
+        await new Promise(resolve => {
+            notificationTimerId = setTimeout(resolve, delay * 1000)
+        })
         dispatch(removeNotification())
-    }, 3000);
+    }
 }
 
 const reducer = (state = initialState, action) => {
