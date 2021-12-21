@@ -5,8 +5,10 @@ import { showNotification } from '../reducers/notificationReducer'
 
 const AnecdoteList = () => {
     const dispatch = useDispatch()
+    let searchFilter;
 
     const anecdotes = useSelector(({filter, anecdotes}) => {
+            searchFilter = filter
             return !filter ? anecdotes : anecdotes.filter(anecdote => anecdote.content.toLowerCase().includes(filter.toLowerCase()))        
         })
 
@@ -39,7 +41,7 @@ const AnecdoteList = () => {
                         <button onClick={() => vote(anecdote)}>vote</button>
                     </div>
                 </div>)
-            : 'No Results Found'
+            : searchFilter ? 'No Results Found' : ''
         }
        </>
    )
