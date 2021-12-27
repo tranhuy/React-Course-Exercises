@@ -31,10 +31,15 @@ const App = () => {
   const history = useHistory()
 
   const addNew = (anecdote) => {
-    anecdote.id = (Math.random() * 10000).toFixed(0)
-    setAnecdotes(anecdotes.concat(anecdote))
-    setNotification({ message: `New Anecdote: ${anecdote.content} was successfully created`, isError: false })
-    history.push('/')
+    //only allow anecdotes to be added if all form fields have a value
+    if (Object.values(anecdote).every(v => v !== '')) {
+      anecdote.id = (Math.random() * 10000).toFixed(0)
+      setAnecdotes(anecdotes.concat(anecdote))
+      setNotification({ message: `New Anecdote: ${anecdote.content} was successfully created`, isError: false })
+      history.push('/')
+    } else {
+      setNotification({ message: 'ERROR: Empty field(s) found', isError: true })
+    }    
   }
 
   const anecdoteById = (id) =>
