@@ -3,8 +3,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Switch, Route, Link, useHistory } from 'react-router-dom'
 
 //components
+import Menu from './components/Menu'
 import BlogForm from './components/BlogForm'
 import BlogList from './components/BlogList'
+import Blog from './components/Blog'
 import Togglable from './components/Togglable'
 import LoginForm from './components/LoginForm'
 import UserList from './components/UserList'
@@ -21,6 +23,8 @@ import userService from './services/users'
 const App = () => {
   const [users, setUsers] = useState([])
   const user = useSelector(state => state.user) 
+  const blogs = useSelector(state => state.blog)
+
   const dispatch = useDispatch()
   const history = useHistory()
   const togglableRef = useRef()
@@ -47,31 +51,30 @@ const App = () => {
 
   return (
     <>
-      <Notification />
+      <Notification />  
       {
         user === null ? 
           <LoginForm /> :
           <div>
-              <h2>blogs</h2>
-              <div style={{ display: 'flex', alignItems: 'center', whiteSpace: 'pre-wrap' }}>
-                <h4>{user.name} logged in </h4>
-                <Link to='/'>
-                    <button onClick={logoutUser}>Logout</button>
-                </Link>              
-              </div>
+              <Menu username={user.name} logoutHandler={logoutUser} />                 
+              <h2>Blog App</h2> 
               <Switch>
                 <Route exact path="/">
+                    <h3>Blogs</h3>  
                     <Togglable buttonLabel="Create New Blog" ref={togglableRef}>
                       <BlogForm togglableRef={togglableRef} />
                     </Togglable>             
-                    <BlogList loggedInUserId={user.id} />
+                    <BlogList blogs={blogs} />
                 </Route>
                 <Route exact path="/users">
                     <UserList users={users} />
                 </Route>   
                 <Route exact path="/users/:id">
-                    {<UserDetails users={users} />}
-                </Route>            
+                    <UserDetails users={users} />
+                </Route> 
+                <Route exact path="/blogs/:id">
+                    <Blog blogs={blogs} />
+                </Route>           
               </Switch>
               
           </div>       

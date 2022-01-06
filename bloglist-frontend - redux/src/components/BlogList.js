@@ -1,15 +1,25 @@
 import { useSelector } from 'react-redux'
-import Blog from '../components/Blog'
+import { Link } from 'react-router-dom'
 
-const BlogList = ({ loggedInUserId }) => {
-    const blogs = useSelector(state => state.blog)
-
+const BlogList = ({ blogs }) => {
+    //const blogs = useSelector(state => state.blog)
+    const blogStyle = {
+        padding: 6,
+        border: 'solid',
+        borderWidth: 2,
+        marginBottom: 5,
+        marginTop: 0,
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 5
+      }
+    
     return (
         <>
             <section style={{marginTop: '10px'}}>
                 {
                     blogs && blogs.map(blog => 
-                            <Blog key={blog.id} blog={blog} canDelete={loggedInUserId == blog.user.id} />)
+                        <p key={blog.id} style={blogStyle}><Link to={`blogs/${blog.id}`}>{blog.title} - {blog.author}</Link></p>)
                 }    
             </section>        
         </>
