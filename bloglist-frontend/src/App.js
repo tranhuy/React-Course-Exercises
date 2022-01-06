@@ -57,7 +57,7 @@ const App = () => {
   }
 
   const logoutUser = () => {
-    window.localStorage.removeItem('loggedInUser')
+    window.localStorage.removeItem('loggedInBlogUser')
     setUser(null)
   }
 

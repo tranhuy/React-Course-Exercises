@@ -33,7 +33,7 @@ const useCountry = (name) => {
           setCountry(null)
         })
     }   
-  }, [name]) // eslint-disable-line react-hooks/exhaustive-deps  
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps  
 
   return country
 }

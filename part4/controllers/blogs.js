@@ -105,7 +105,7 @@ blogsRouter.put('/:id', async (req, res, next) => {
     const {user, title, author, url, likes } = req.body
 
     let blog = {
-        user: user,
+        user: user.id,
         title: title,
         author: author,
         url: url,

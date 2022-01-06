@@ -1,0 +1,8 @@
+ul {
+  list-style: none;
+  padding-inline-start: 5px;
+}
+  
+li::before {
+  content: '⮚ ';
+}

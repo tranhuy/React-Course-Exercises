@@ -18,8 +18,8 @@ const toggleDetails = () => {
   setShowBlogDetails(!showBlogDetails)
 }
 
-const incrementLikes = () => {
-  setCurrentBlog(blogActions.update({...blog, user: blog.user.id, likes: ++blog.likes}))
+const incrementLikes = async () => {
+  setCurrentBlog(await blogActions.update({...blog, user: blog.user.id, likes: ++blog.likes}))
 }
 
 const deleteBlog = () => {
@@ -33,14 +33,14 @@ return (
     {
       showBlogDetails ? 
         <table>
-          <tr className='title'><td>{blog.title}</td></tr>
-          <tr className='url'><td>{blog.url}</td></tr>
-          <tr className='likes'><td>{blog.likes} <button onClick={incrementLikes}>Like</button></td></tr>
-          <tr className='author'><td>{blog.author}</td></tr>
+          <tr className='title'><td>{currentBlog.title}</td></tr>
+          <tr className='url'><td>{currentBlog.url}</td></tr>
+          <tr className='likes'><td>{currentBlog.likes} <button onClick={incrementLikes}>Like</button></td></tr>
+          <tr className='author'><td>{currentBlog.author}</td></tr>
           {canDelete && <tr><td><button onClick={deleteBlog}>Delete Blog</button></td></tr>}
         </table>
       : <table>
-          <tr className='title'><td>{blog.title}</td><td>{blog.author}</td></tr>
+          <tr className='title'><td>{currentBlog.title}</td><td>{currentBlog.author}</td></tr>
         </table>
     }
     <div><button data-cy='toggleDetails' onClick={toggleDetails}>{showBlogDetails ? "Hide" : "View"}</button></div>
