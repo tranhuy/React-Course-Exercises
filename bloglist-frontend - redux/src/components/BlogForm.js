@@ -6,9 +6,9 @@ import { createBlog } from '../reducers/blogReducer'
 import { showNotification } from '../reducers/notificationReducer'
 
 const BlogForm = ({ togglableRef }) => {
-    const title = useField('text')
-    const author = useField('text')
-    const url = useField('text')
+    const { reset: resetTitle, ...title } = useField('text')
+    const { reset: resetAuthor, ...author } = useField('text')
+    const { reset: resetUrl, ...url } = useField('text')
 
     const dispatch = useDispatch()
 

@@ -71,6 +71,20 @@ blogsRouter.post('/', middleware.userExtractor, async (req, res, next) => {
     //     .catch(err => next(err))
 })
 
+blogsRouter.post('/:id/comments', async (req, res, next) => {
+    const comment = req.body.comments
+    
+    if (!comment) {
+        return res.status(400).json({ error: 'comments missing' })
+    }
+
+    const blog = await Blog.findById(req.params.id)
+    blog.comments = blog.comments.concat(comment)
+    const savedBlog = await blog.save()
+
+    res.status(201).json(savedBlog)
+})
+
 blogsRouter.delete('/:id', middleware.userExtractor, async (req, res, next) => {
     //const decodedToken = jwt.verify(req.token, process.env.SECRET)
     const blogToDelete = await Blog.findById(req.params.id)

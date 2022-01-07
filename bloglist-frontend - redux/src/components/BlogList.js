@@ -16,6 +16,7 @@ const BlogList = ({ blogs }) => {
     
     return (
         <>
+            <h3>Blogs</h3>
             <section style={{marginTop: '10px'}}>
                 {
                     blogs && blogs.map(blog => 

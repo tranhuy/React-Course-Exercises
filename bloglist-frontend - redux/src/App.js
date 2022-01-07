@@ -59,8 +59,7 @@ const App = () => {
               <Menu username={user.name} logoutHandler={logoutUser} />                 
               <h2>Blog App</h2> 
               <Switch>
-                <Route exact path="/">
-                    <h3>Blogs</h3>  
+                <Route exact path="/">                     
                     <Togglable buttonLabel="Create New Blog" ref={togglableRef}>
                       <BlogForm togglableRef={togglableRef} />
                     </Togglable>             

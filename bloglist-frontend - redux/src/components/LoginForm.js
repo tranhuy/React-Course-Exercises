@@ -8,8 +8,8 @@ import { initializeBlogs } from '../reducers/blogReducer'
 
 
 const LoginForm = () => {
-    const username = useField('text')
-    const password = useField('password')
+    const { reset: resetUsernae, ...username } = useField('text')
+    const { reset: resetPassword, ...password } = useField('password')
     const dispatch = useDispatch()
     
     const loginUser = async (event) => {
