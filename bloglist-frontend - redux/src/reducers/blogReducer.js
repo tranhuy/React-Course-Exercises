@@ -61,8 +61,8 @@ const reducer = (state = [], action) => {
     switch (action.type) {
         case 'NEW_BLOG':
             return [...state, action.data]
-        case 'LIKE_BLOG',
-             'COMMENT_BLOG':
+        case 'LIKE_BLOG': 
+        case 'COMMENT_BLOG':
             return state.map(blog => blog.id !== action.data.id ? blog : action.data)
         case 'DELETE_BLOG':
             return state.filter(blog => blog.id != action.data)

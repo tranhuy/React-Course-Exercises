@@ -46,7 +46,7 @@ const Blog = ({ blogs }) => {
   const incrementLikes = async () => {
     try {
       await dispatch(likeBlog({...blog, likes: ++blog.likes}))
-      //dispatch(sortByLikes())
+      dispatch(sortByLikes())
     } catch (err) {
       console.log(err)
     } 

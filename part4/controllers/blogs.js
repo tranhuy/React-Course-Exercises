@@ -116,10 +116,9 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (req, res, next) => {
 })
 
 blogsRouter.put('/:id', async (req, res, next) => {
-    const {user, title, author, url, likes } = req.body
+    const {title, author, url, likes } = req.body
 
     let blog = {
-        user: user.id,
         title: title,
         author: author,
         url: url,
