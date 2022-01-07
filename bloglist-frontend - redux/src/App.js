@@ -43,7 +43,7 @@ const App = () => {
     userService.getAll().then(users => 
         setUsers(users)
     )
-}, [])
+}, [blogs])
 
   const logoutUser = () => {
     dispatch(logout())
