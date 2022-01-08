@@ -22,7 +22,7 @@ const BlogList = ({ blogs }) => {
             <section style={{marginTop: '10px'}}>
                 {
                     blogs && blogs.map(blog => 
-                        <Link to={`blogs/${blog.id}`} style={{ color: 'black', textDecoration: 'none' }}><BlogItem key={blog.id}>{blog.title} - {blog.author}</BlogItem></Link>)
+                        <Link key={blog.id} to={`blogs/${blog.id}`} style={{ color: 'black', textDecoration: 'none' }}><BlogItem>{blog.title} - {blog.author}</BlogItem></Link>)
                 }    
             </section>        
         </>
