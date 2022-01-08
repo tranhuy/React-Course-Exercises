@@ -1,6 +1,6 @@
 ul {
   list-style: none;
-  padding-inline-start: 5px;
+  padding-left: 10px !important;
 }
   
 li::before {

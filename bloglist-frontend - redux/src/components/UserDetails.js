@@ -12,11 +12,11 @@ const UserDetails = ({users}) => {
 
     return (
         <div>
-            <h2>{user.name}</h2>
+            <h4 className='my-4'>{user.name}</h4>
             {
                 user.blogs.length === 0 ? 'No blogs added' :
                 <>
-                    <h4>Added Blogs</h4>
+                    <h5>Added Blogs</h5>
                     <ul>
                         {user.blogs.map(blog => 
                             <li key={blog.id}>

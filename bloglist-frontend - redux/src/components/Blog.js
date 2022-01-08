@@ -26,9 +26,8 @@ const Blog = ({ blogs }) => {
 
   const imgButtonStyle = {
     border: 0,
-    backgroundImage: `url('${process.env.PUBLIC_URL}/smThumbsUp.jpg')`,
-    width: 18,
-    height: 17,
+    background: 'transparent',
+    //backgroundImage: `url('${process.env.PUBLIC_URL}/smThumbsUp.jpg')`,
     cursor: 'pointer'
   }
 
@@ -83,27 +82,35 @@ const Blog = ({ blogs }) => {
 
   return (
     <div className='blog'>
-      <table>
+      <table className='my-4'>
             <tbody>
               <tr className='title'><td style={{fontSize: '25px', fontWeight: 'bold'}}>{blog.title}</td></tr>
               <tr style={{height: 10}}></tr>
               <tr className='url'><td><a href={setHttp(blog.url)}>{blog.url}</a></td></tr>
-              <tr className='likes'><td>{blog.likes} likes <button title='like blog' onClick={incrementLikes} style={imgButtonStyle} /></td></tr>
+              <tr className='likes'><td>{blog.likes} likes <button title='like blog' onClick={incrementLikes} style={imgButtonStyle}><i class='bi bi-hand-thumbs-up'></i></button></td></tr>
               <tr className='author'><td>Added By: {blog.author}</td></tr>
             </tbody>
         </table>
         <h4>Comments</h4>
-        <form onSubmit={addComment}>
-          <input {...comment} /> <button>Comment</button>
+        <form className='row g-3 mb-2' onSubmit={addComment}>
+          <div className='col-auto'>
+              <label htmlFor='comment'>Comment:</label>           
+          </div>
+          <div className='col-5'>
+              <input id='comment' className='form-control form-control-sm' {...comment} />
+          </div>
+          <div className='col-auto'>
+              <button className='btn btn-sm btn-outline-secondary'>Comment</button>
+          </div>    
         </form>
-        <ul>
-          {
-            blog.comments.length > 0 ?
-              blog.comments.map((comment, id) => 
-                <li key={id}>{comment}</li>)
-              : 'No comments provided'
-          }
-        </ul>
+        {
+          blog.comments.length > 0 ?
+          <ul>
+            {blog.comments.map((comment, id) => 
+              <li key={id}>{comment}</li>)}
+          </ul>
+            : <div>No comments provided</div>
+        }
     </div>  
   )}
 

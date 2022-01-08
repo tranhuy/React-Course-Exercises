@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 const UserList = ({users}) => {
     return (
         <div>
-            <h2>Users</h2>
+            <h4>Users</h4>
             <table>
                 <thead>
                     <tr>

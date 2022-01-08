@@ -33,25 +33,21 @@ const BlogForm = ({ togglableRef }) => {
 
     return (
         <>
-            <h3>Create New Blog</h3>
-            <form onSubmit={addNewBlog} style={{marginBottom: '10px'}}>
-              <table>
-                <tbody>
-                    <tr>
-                      <td>Title:</td>
-                      <td><input id="title" {...title} /></td>
-                    </tr>
-                    <tr>
-                      <td>Author:</td>
-                      <td><input id="author" {...author} /></td>
-                    </tr>
-                    <tr>
-                      <td>Url:</td>
-                      <td><input id="url" {...url} /></td>
-                    </tr>
-                  </tbody>
-                </table>
-                <button type='submit'>Create</button>
+            <h4>Create New Blog</h4>
+            <form onSubmit={addNewBlog}>
+              <div className='form-group mb-2'>
+                    <label htmlFor='title'>Title:</label>
+                    <input id='title' className='form-control' {...title} />
+                </div>
+                <div className='form-group mb-2'>
+                    <label htmlFor='author'>Author:</label>
+                    <input id='author' className='form-control' {...author} />
+                </div>
+                <div className='form-group mb-2'>
+                    <label htmlFor='url'>Url:</label>
+                    <input id='url' className='form-control' {...url} />
+                </div>
+                <button type="submit" className='btn btn-outline-secondary mb-2'>Create</button>
             </form>
         </>
     )
