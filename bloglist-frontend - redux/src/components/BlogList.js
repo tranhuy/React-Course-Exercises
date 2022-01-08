@@ -1,6 +1,8 @@
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
+import { BlogItem } from './styled/BlogItem.style'
+
 const BlogList = ({ blogs }) => {
     //const blogs = useSelector(state => state.blog)
     const blogStyle = {
@@ -20,7 +22,7 @@ const BlogList = ({ blogs }) => {
             <section style={{marginTop: '10px'}}>
                 {
                     blogs && blogs.map(blog => 
-                        <p key={blog.id} style={blogStyle}><Link to={`blogs/${blog.id}`}>{blog.title} - {blog.author}</Link></p>)
+                        <Link to={`blogs/${blog.id}`} style={{ color: 'black', textDecoration: 'none' }}><BlogItem key={blog.id}>{blog.title} - {blog.author}</BlogItem></Link>)
                 }    
             </section>        
         </>
