@@ -87,7 +87,7 @@ const Blog = ({ blogs }) => {
               <tr className='title'><td style={{fontSize: '25px', fontWeight: 'bold'}}>{blog.title}</td></tr>
               <tr style={{height: 10}}></tr>
               <tr className='url'><td><a href={setHttp(blog.url)}>{blog.url}</a></td></tr>
-              <tr className='likes'><td>{blog.likes} likes <button title='like blog' onClick={incrementLikes} style={imgButtonStyle}><i class='bi bi-hand-thumbs-up'></i></button></td></tr>
+              <tr className='likes'><td>{blog.likes} likes <button title='like blog' onClick={incrementLikes} style={imgButtonStyle}><i className='bi bi-hand-thumbs-up'></i></button></td></tr>
               <tr className='author'><td>Added By: {blog.author}</td></tr>
             </tbody>
         </table>
