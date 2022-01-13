@@ -1,4 +1,5 @@
 const { ApolloServer, gql } = require('apollo-server')
+const { ApolloServerPluginLandingPageGraphQLPlayground } = require('apollo-server-core')
 const { v1: uuid } = require('uuid')
 
 let authors = [
@@ -173,6 +174,9 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  plugins: [
+    ApolloServerPluginLandingPageGraphQLPlayground()
+  ],
 })
 
 server.listen().then(({ url }) => {
