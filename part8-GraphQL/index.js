@@ -108,7 +108,7 @@ const typeDefs = gql`
             title: String!
             published: Int!
             author: String!
-            genres: [String!]
+            genres: [String!]!
         ) : Book
         addAuthor(
             name: String!
