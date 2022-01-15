@@ -20,6 +20,7 @@ const EditAuthorSelect = ({ authors, setError }) => {
             setError('Author not found')
         }
 
+        setName(authors[0].name)
         setBirthYear('')
     }
 
@@ -31,7 +32,7 @@ const EditAuthorSelect = ({ authors, setError }) => {
                 <tbody>
                     <tr>
                         <td colSpan={2}>
-                            <select style={{ width: '100%' }} onChange={ ({target} ) => setName(target.value) }>
+                            <select style={{ width: '100%' }} value={name} onChange={ ({target} ) => setName(target.value) }>
                                 {authors.map(author =>
                                     <option key={author.id} value={author.name}>{author.name}</option>)}
                             </select>
