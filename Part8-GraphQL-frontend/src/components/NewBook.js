@@ -10,7 +10,10 @@ const NewBook = ({ show, setError }) => {
   const [genres, setGenres] = useState([])
 
   const [ addBook ] = useMutation(ADD_BOOK, {
-    refetchQueries: [ { query: ALL_BOOKS }, { query: ALL_AUTHORS }]
+    refetchQueries: [ { query: ALL_BOOKS }, { query: ALL_AUTHORS }], 
+    onError: (error) => {
+      setError(error.message)
+    }
   })
 
   if (!show) {
@@ -45,26 +48,13 @@ const NewBook = ({ show, setError }) => {
     <div>
       <form onSubmit={submit}>
         <div>
-          title
-          <input
-            value={title}
-            onChange={({ target }) => setTitle(target.value)}
-          />
+          title: <input value={title} onChange={({ target }) => setTitle(target.value)} />
         </div>
         <div>
-          author
-          <input
-            value={author}
-            onChange={({ target }) => setAuthor(target.value)}
-          />
+          author: <input value={author} onChange={({ target }) => setAuthor(target.value)} />
         </div>
         <div>
-          published
-          <input
-            type='number'
-            value={published}
-            onChange={({ target }) => setPublished(target.value)}
-          />
+          published: <input type='number' value={published} onChange={({ target }) => setPublished(target.value)} />
         </div>
         <div>
           <input

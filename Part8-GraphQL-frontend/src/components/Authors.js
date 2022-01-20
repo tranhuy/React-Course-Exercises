@@ -5,7 +5,7 @@
   import EditAuthor from './EditAuthor'
   import EditAuthorSelect from './EditAuthorSelect'
 
-const Authors = ({ show, setError }) => {
+const Authors = ({ show, canEdit, setError }) => {
   // eslint-disable-next-line
   const { loading, error, data} = useQuery(ALL_AUTHORS)
 
@@ -43,7 +43,9 @@ const Authors = ({ show, setError }) => {
         </tbody>
       </table>
       {/* <EditAuthor setError={setError} /> */}
-      <EditAuthorSelect authors={authors} setError={setError} />
+      {
+        canEdit && <EditAuthorSelect authors={authors} setError={setError} />
+      }
     </div>
   )
 }

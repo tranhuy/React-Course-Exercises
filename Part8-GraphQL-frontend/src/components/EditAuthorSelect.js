@@ -40,7 +40,7 @@ const EditAuthorSelect = ({ authors, setError }) => {
                     </tr>
                     <tr>
                         <td>Birth Year: </td>
-                        <td><input value={birthYear} onChange={ ({ target }) => setBirthYear(target.value) } /></td>
+                        <td><input type='number' value={birthYear} onChange={ ({ target }) => setBirthYear(target.value) } /></td>
                     </tr>
                     <tr>
                         <td>
