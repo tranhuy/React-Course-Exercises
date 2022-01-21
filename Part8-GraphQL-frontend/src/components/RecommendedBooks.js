@@ -3,8 +3,7 @@ import { useQuery, useLazyQuery } from '@apollo/client'
 import { LOGGED_IN_USER, BOOKS_BY_GENRE } from '../queries'
 
 
-const RecommendedBooks = ({ show }) => {
-    const [user, setUser] = useState(null)
+const RecommendedBooks = ({ show, user }) => {
     const [books, setBooks] = useState([])
     const userResult = useQuery(LOGGED_IN_USER)  
     const [getBooks, booksResult] = useLazyQuery(BOOKS_BY_GENRE, { pollInterval: 2000 })
@@ -14,12 +13,10 @@ const RecommendedBooks = ({ show }) => {
     }   
 
     useEffect(() => {
-        if (userResult.data && userResult.data.currentUser) {
-            const loggedInUser = userResult.data.currentUser
-            setUser(loggedInUser)
-            getBooksByGenre(loggedInUser.favoriteGenre)
+        if (user) {
+            getBooksByGenre(user.favoriteGenre)
         }
-    }, [userResult.data])
+    }, [user])
 
     useEffect(() => {
         if (booksResult.data) {
@@ -31,7 +28,7 @@ const RecommendedBooks = ({ show }) => {
         return null
     }
     
-    if (userResult.loading || booksResult.loading) {
+    if (booksResult.loading) {
         return <div>loading recommendations...</div>
     }
     

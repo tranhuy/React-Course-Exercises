@@ -1,10 +1,11 @@
-import React, { useState, useRef } from 'react'
-import { useMutation, useApolloClient } from '@apollo/client'
+import React, { useState, useEffect, useRef } from 'react'
+import { useQuery, useMutation, useApolloClient } from '@apollo/client'
 import { LOGIN_USER, LOGGED_IN_USER } from '../queries'
 
-const Login = ({ show, setToken, setError }) => {
+const Login = ({ show, setUser, setToken, setError }) => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const userResult = useQuery(LOGGED_IN_USER)
     
     const client = useApolloClient()
     const usernameRef = useRef()
@@ -22,6 +23,13 @@ const Login = ({ show, setToken, setError }) => {
             client.refetchQueries({ include: [LOGGED_IN_USER] })
         }
     })
+
+    useEffect(() => {
+        if (userResult.data && userResult.data.currentUser) {
+            const loggedInUser = userResult.data.currentUser
+            setUser(loggedInUser)
+        }
+    }, [userResult.data])
 
     if (!show) {
         return null

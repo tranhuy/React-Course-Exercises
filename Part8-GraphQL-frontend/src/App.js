@@ -11,6 +11,7 @@ import Notification from './components/Notification'
 
 const App = () => {
   const [page, setPage] = useState('authors')
+  const [user, setUser] = useState(null)
   const [error, setError] = useState(null)
   const [token, setToken] = useState(null)
 
@@ -39,6 +40,7 @@ const App = () => {
   const logout = () => {   
     localStorage.clear()
     setToken(null)
+    setUser(null)
     setPage('authors')
     client.resetStore()
   }
@@ -72,15 +74,18 @@ const App = () => {
 
       <RecommendedBooks
         show={page === 'recommend'}
+        user={user}
       />
 
       <NewBook
         show={page === 'add'} 
+        user={user}
         setError={notify}
       />
 
       <Login
         show={page === 'login'} 
+        setUser={setUser}
         setToken={setToken}
         setError={notify}
       />
