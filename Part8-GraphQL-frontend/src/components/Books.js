@@ -1,11 +1,28 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ALL_BOOKS } from '../queries'
 import { useQuery } from '@apollo/client'
 
 const Books = (props) => {
-  const [selectedGenre, setSelectedGenre] = useState('all genres')
+  const [books, setBooks] = useState([])
+  const [selectedBooks, setSelectedBooks] = useState([])
+  const [genres, setGenres] = useState([])
+  const [selectedGenre, setSelectedGenre] = useState('all')
 
   const result = useQuery(ALL_BOOKS)
+
+  useEffect(() => {
+    if (result.data) {
+      const allBooks = result.data.allBooks
+      setBooks(allBooks)
+      setSelectedBooks(allBooks)
+      setGenres([...new Set(allBooks.map(book => book.genres).flat())])
+    }   
+  }, [result.data, props.isLoggedIn])
+
+  useEffect(() => {
+      const booksToDisplay = selectedGenre === 'all' ? books : books.filter(book => book.genres.includes(selectedGenre))
+      setSelectedBooks(booksToDisplay)
+  }, [selectedGenre])
 
   if (!props.show) {
     return null
@@ -14,10 +31,6 @@ const Books = (props) => {
   if (result.loading) {
     return <div>loading books...</div>
   }
-
-  const allBooks = result.data.allBooks
-  const books = selectedGenre === 'all genres' ? allBooks : allBooks.filter(book => book.genres.includes(selectedGenre))
-  const genres = [...new Set(allBooks.map(book => book.genres).flat())]
 
   return (
     <div>
@@ -34,7 +47,7 @@ const Books = (props) => {
               Published
             </th>
           </tr>
-          {books.map(a =>
+          {selectedBooks.map(a =>
             <tr key={a.title}>
               <td>{a.title}</td>
               <td>{a.author.name}</td>
@@ -49,7 +62,7 @@ const Books = (props) => {
                   <button key={index} onClick={() => setSelectedGenre(genre)}>{genre}</button>
               )
             }
-            <button onClick={() => setSelectedGenre('all genres')}>all genres</button>
+            <button onClick={() => setSelectedGenre('all')}>all genres</button>
       </div>
     </div>
   )

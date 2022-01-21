@@ -39,8 +39,8 @@ const App = () => {
   const logout = () => {   
     localStorage.clear()
     setToken(null)
-    client.resetStore()
     setPage('authors')
+    client.resetStore()
   }
 
   return (
@@ -67,6 +67,7 @@ const App = () => {
 
       <Books
         show={page === 'books'}
+        isLoggedIn={token !== null}
       />
 
       <RecommendedBooks
