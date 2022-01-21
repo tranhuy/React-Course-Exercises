@@ -24,6 +24,21 @@ export const ALL_BOOKS = gql`
     }
 `
 
+export const BOOKS_BY_GENRE = gql`
+    query findByGenre($genre: String) {
+        allBooks(
+            genre: $genre
+        ) {
+            title
+            author {
+                name
+            }
+            published
+            genres
+        }
+    }
+`
+
 export const LOGGED_IN_USER = gql`
     query {
         currentUser {
@@ -46,6 +61,7 @@ export const ADD_BOOK = gql`
             author {
                 name
             }
+            genres
         }
     }
 `
