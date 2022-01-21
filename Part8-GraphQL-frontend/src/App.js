@@ -61,7 +61,7 @@ const App = () => {
       <Notification errorMessage={error} />
       <Authors
         show={page === 'authors'}
-        canEdit={token !== null}
+        isLoggedIn={token !== null}
         setError={notify}
       />
 

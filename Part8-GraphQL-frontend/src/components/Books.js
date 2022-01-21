@@ -6,7 +6,7 @@ const Books = (props) => {
   const [books, setBooks] = useState([])
   const [selectedBooks, setSelectedBooks] = useState([])
   const [genres, setGenres] = useState([])
-  const [selectedGenre, setSelectedGenre] = useState('all')
+  const [selectedGenre, setSelectedGenre] = useState('all genres')
 
   const result = useQuery(ALL_BOOKS)
 
@@ -15,12 +15,13 @@ const Books = (props) => {
       const allBooks = result.data.allBooks
       setBooks(allBooks)
       setSelectedBooks(allBooks)
+      setSelectedGenre('all genres')
       setGenres([...new Set(allBooks.map(book => book.genres).flat())])
     }   
   }, [result.data, props.isLoggedIn])
 
   useEffect(() => {
-      const booksToDisplay = selectedGenre === 'all' ? books : books.filter(book => book.genres.includes(selectedGenre))
+      const booksToDisplay = selectedGenre === 'all genres' ? books : books.filter(book => book.genres.includes(selectedGenre))
       setSelectedBooks(booksToDisplay)
   }, [selectedGenre])
 
@@ -62,7 +63,7 @@ const Books = (props) => {
                   <button key={index} onClick={() => setSelectedGenre(genre)}>{genre}</button>
               )
             }
-            <button onClick={() => setSelectedGenre('all')}>all genres</button>
+            <button onClick={() => setSelectedGenre('all genres')}>all genres</button>
       </div>
     </div>
   )
