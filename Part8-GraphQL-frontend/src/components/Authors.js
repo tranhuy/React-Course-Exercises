@@ -19,6 +19,15 @@ const Authors = ({ show, isLoggedIn, setError }) => {
 
   const authors = data.allAuthors
 
+  if (authors.length === 0) {
+    return (
+      <div>
+        <h2>Authors</h2>
+        <div>No authors to display.</div>
+      </div>
+    )
+  }
+
   return (
     <div>
       <h2>Authors</h2>

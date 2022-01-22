@@ -82,6 +82,7 @@ const typeDefs = gql`
           username: String!
           password: String!
         ) : Token
+        deleteAll : Int!
     }
 `
 
@@ -113,6 +114,12 @@ const resolvers = {
       bookCount: async (root) => (await Book.find({ author: root })).length
   },
   Mutation: {
+      deleteAll: async () => {
+        const { deletedCount: booksDeleted } = await Book.deleteMany({})
+        const { deletedCount: authorsDeleted } = await Author.deleteMany({})
+
+        return booksDeleted + authorsDeleted
+      },
       addBook: async (root, args, context) => {
         if (!context.currentUser) {
             throw new AuthenticationError('Not Authenticated')

@@ -14,6 +14,21 @@ const NewBook = React.forwardRef(({ show, user, setError }, ref) => {
     onError: (error) => {
       setError(error.message)
     },
+    update: (cache, { data }) => {
+      const { allBooks } = cache.readQuery({ query: BOOKS_BY_GENRE, variables: { genre: user.favoriteGenre } })
+      
+      if (data.addBook.genres.includes(user.favoriteGenre)) {
+        cache.writeQuery({
+          query: BOOKS_BY_GENRE,
+          data: {
+            allBooks: [ ...allBooks, data.addBook ]
+          },
+          variables: {
+            genre: user.favoriteGenre
+          }
+        })
+      }
+    }
   })
 
   const clearFormFields = () => {

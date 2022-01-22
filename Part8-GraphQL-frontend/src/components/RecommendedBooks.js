@@ -6,7 +6,7 @@ import { LOGGED_IN_USER, BOOKS_BY_GENRE } from '../queries'
 const RecommendedBooks = ({ show, user }) => {
     const [books, setBooks] = useState([])
     const userResult = useQuery(LOGGED_IN_USER)  
-    const [getBooks, booksResult] = useLazyQuery(BOOKS_BY_GENRE, { pollInterval: 2000 })
+    const [getBooks, booksResult] = useLazyQuery(BOOKS_BY_GENRE)
 
     const getBooksByGenre = genre => {
         getBooks({ variables: { genre } })  
@@ -30,6 +30,15 @@ const RecommendedBooks = ({ show, user }) => {
     
     if (booksResult.loading) {
         return <div>loading recommendations...</div>
+    }
+
+    if (books.length === 0) {
+        return (
+          <div>
+            <h2>Recommendations from {user.username}</h2>
+            <div>No books were found in genre <strong>{user.favoriteGenre}</strong>.</div>
+          </div>
+        )
     }
     
     return (

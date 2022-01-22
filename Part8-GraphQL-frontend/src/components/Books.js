@@ -33,6 +33,15 @@ const Books = (props) => {
     return <div>loading books...</div>
   }
 
+  if (books.length === 0) {
+    return (
+      <div>
+        <h2>Books</h2>
+        <div>No books to display.</div>
+      </div>
+    )
+  }
+
   return (
     <div>
       <h2>Books</h2>
