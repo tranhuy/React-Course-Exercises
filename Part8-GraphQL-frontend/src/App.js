@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useApolloClient } from '@apollo/client'
 
 import Authors from './components/Authors'
@@ -16,6 +16,7 @@ const App = () => {
   const [token, setToken] = useState(null)
 
   const client = useApolloClient()
+  const newBookRef = useRef()
 
   useEffect(() => {
     const loggedInUserToken = localStorage.getItem('libraryApp-user-token')
@@ -43,6 +44,7 @@ const App = () => {
     setUser(null)
     setPage('authors')
     client.resetStore()
+    newBookRef.current.clearFormFields()
   }
 
   return (
@@ -81,6 +83,7 @@ const App = () => {
         show={page === 'add'} 
         user={user}
         setError={notify}
+        ref={newBookRef}
       />
 
       <Login

@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useImperativeHandle } from 'react'
 import { ADD_BOOK, ALL_BOOKS, ALL_AUTHORS, BOOKS_BY_GENRE } from '../queries'
 import { useMutation } from '@apollo/client'
 
-const NewBook = ({ show, user, setError }) => {
+const NewBook = React.forwardRef(({ show, user, setError }, ref) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [published, setPublished] = useState('')
@@ -14,6 +14,20 @@ const NewBook = ({ show, user, setError }) => {
     onError: (error) => {
       setError(error.message)
     },
+  })
+
+  const clearFormFields = () => {
+    setTitle('')
+    setPublished('')
+    setAuthor('')
+    setGenres([])
+    setGenre('')
+  }
+
+  useImperativeHandle(ref, () => {
+    return {
+      clearFormFields
+    }
   })
 
   if (!show) {
@@ -32,11 +46,7 @@ const NewBook = ({ show, user, setError }) => {
 
     await addBook({ variables: { title, published: Number(published), author, genres }})
 
-    setTitle('')
-    setPublished('')
-    setAuthor('')
-    setGenres([])
-    setGenre('')
+    clearFormFields()
   }
 
   const addGenre = () => {
@@ -48,7 +58,7 @@ const NewBook = ({ show, user, setError }) => {
     <div>
       <form onSubmit={submit}>
         <div>
-          title: <input value={title} onChange={({ target }) => setTitle(target.value)} />
+          title: <input value={title} onChange={({ target }) => setTitle(target.value)} autoFocus />
         </div>
         <div>
           author: <input value={author} onChange={({ target }) => setAuthor(target.value)} />
@@ -70,6 +80,6 @@ const NewBook = ({ show, user, setError }) => {
       </form>
     </div>
   )
-}
+})
 
 export default NewBook
