@@ -141,13 +141,13 @@ const resolvers = {
           let author = await Author.findOne({ name: args.author })
           //Add new author if author name provided in mutation args does not exist
           if (!author) {
-            author = new Author({ name: args.author, bookCount: 1 })
-            await author.save() 
+            author = new Author({ name: args.author, bookCount: 1 })           
           } else {
             author.bookCount++
           }
 
-          newBook.author = author
+          await author.save() 
+          newBook.author = author         
           await newBook.save()
         } catch (error) {
           throw new UserInputError(error.message, { invalidArgs: args })
