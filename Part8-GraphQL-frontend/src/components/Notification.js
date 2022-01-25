@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Notification = ({errorMessage}) => {
+const Notification = ({ notification }) => {
     const errorStyle = {
         color: 'red',
         borderStyle: 'solid',
@@ -8,18 +8,26 @@ const Notification = ({errorMessage}) => {
         padding: '5px',
         marginBottom: '10px',
         marginTop: '10px'
-   }
- 
-
-    if ( !errorMessage ) {
-      return null
     }
 
-    return (
-      <div style={errorStyle}>
-        {errorMessage}
-      </div>
-    )
+    const infoStyle = {
+      color: 'green',
+      borderStyle: 'solid',
+      borderRadius: '5px',
+      padding: '5px',
+      marginBottom: '10px',
+      marginTop: '10px'
   }
 
-  export default Notification
+  if (!notification) {
+    return null
+  }
+
+  return (
+    <div style={notification.isError === true ? errorStyle : infoStyle }>
+      {notification.message}
+    </div>
+  )
+}
+
+export default Notification

@@ -1,5 +1,11 @@
-const { ApolloServer, UserInputError, gql } = require('apollo-server')
-const { ApolloServerPluginLandingPageGraphQLPlayground, AuthenticationError } = require('apollo-server-core')
+const { createServer } = require('http')
+const express = require('express')
+const { execute, subscribe } = require('graphql')
+const { SubscriptionServer } = require('subscriptions-transport-ws')
+const { makeExecutableSchema } = require('@graphql-tools/schema')
+const { ApolloServer, UserInputError, AuthenticationError, gql } = require('apollo-server-express')
+const { ApolloServerPluginLandingPageGraphQLPlayground } = require('apollo-server-core')
+const { PubSub } = require('graphql-subscriptions')
 const mongoose = require('mongoose')
 const { v1: uuid } = require('uuid')
 const bcrypt = require('bcrypt')
@@ -11,6 +17,8 @@ const User = require('./models/user')
 
 require('dotenv').config()
 
+const pubsub = new PubSub()
+
 console.log('connecting to', process.env.MONGODB_URI)
 
 mongoose.connect(process.env.MONGODB_URI)
@@ -21,6 +29,7 @@ mongoose.connect(process.env.MONGODB_URI)
       console.log('error connecting to MongoDB:', err.message)
     })   
 
+mongoose.set('debug', true)
 
 const typeDefs = gql`
     type Book {
@@ -84,6 +93,10 @@ const typeDefs = gql`
         ) : Token
         deleteAll : Int!
     }
+
+    type Subscription {
+      bookAdded: Book!
+    }
 `
 
 const resolvers = {
@@ -110,9 +123,6 @@ const resolvers = {
       allAuthors: async () => await Author.find({}),
       currentUser: (root, args, context) => context.currentUser,
   },
-  Author: {
-      bookCount: async (root) => (await Book.find({ author: root })).length
-  },
   Mutation: {
       deleteAll: async () => {
         const { deletedCount: booksDeleted } = await Book.deleteMany({})
@@ -131,15 +141,19 @@ const resolvers = {
           let author = await Author.findOne({ name: args.author })
           //Add new author if author name provided in mutation args does not exist
           if (!author) {
-            author = new Author({ name: args.author })
+            author = new Author({ name: args.author, bookCount: 1 })
             await author.save() 
+          } else {
+            author.bookCount++
           }
-        
+
           newBook.author = author
           await newBook.save()
         } catch (error) {
           throw new UserInputError(error.message, { invalidArgs: args })
         }
+
+        pubsub.publish('BOOK_ADDED', { bookAdded: newBook })
 
         return newBook
       },
@@ -194,27 +208,64 @@ const resolvers = {
 
           return { value: jwt.sign(userToken, process.env.SECRET) }
       }
+  },
+  Subscription: {
+      bookAdded: {
+        subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
+      }
   }
-}
+};
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  plugins: [
-    ApolloServerPluginLandingPageGraphQLPlayground()
-  ],
-  context: async ({ req }) => {
-    const auth = req ? req.headers.authorization : null
+(async () => {
+  const PORT = 4000
+  const app = express()
 
-    if (auth && auth.toLowerCase().startsWith('bearer ')) {
-      const decodedToken = jwt.verify(auth.substring(7), process.env.SECRET)
-      const currentUser = await User.findById(decodedToken.id)
+  const httpServer = createServer(app)
+  const schema = makeExecutableSchema({ typeDefs, resolvers })
 
-      return { currentUser }
-    }
-  }
-})
+  const subscriptionServer = SubscriptionServer.create(
+    { 
+      schema, 
+      execute, 
+      subscribe,
+      onConnect (connectionParams, webSocket, context) {
+        console.log('subscription server connected')
+      }
+    },
+    { server: httpServer, path: '/subscriptions' }
+  )
 
-server.listen().then(({ url }) => {
-  console.log(`Server ready at ${url}`)
-})
+  const server = new ApolloServer({
+    schema,
+    plugins: [
+      {
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              subscriptionServer.close()
+            }
+          }
+        }
+      },
+      ApolloServerPluginLandingPageGraphQLPlayground( { subscriptionEndpoint: `ws://localhost:${PORT}/subscriptions`} )
+    ],
+    context: async ({ req }) => {
+      const auth = req ? req.headers.authorization : null
+
+      if (auth && auth.toLowerCase().startsWith('bearer ')) {
+        const decodedToken = jwt.verify(auth.substring(7), process.env.SECRET)
+        const currentUser = await User.findById(decodedToken.id)
+
+        return { currentUser }
+      }
+    },
+  })
+
+  await server.start()
+
+  server.applyMiddleware({ app })
+
+  httpServer.listen(PORT, () => {
+    console.log(`Server is now running on http://localhost:${PORT}${server.graphqlPath}`)
+  })
+})();

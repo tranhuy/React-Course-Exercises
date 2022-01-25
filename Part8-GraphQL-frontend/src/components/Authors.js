@@ -5,7 +5,7 @@
   import EditAuthor from './EditAuthor'
   import EditAuthorSelect from './EditAuthorSelect'
 
-const Authors = ({ show, isLoggedIn, setError }) => {
+const Authors = ({ show, isLoggedIn, setNotification }) => {
   // eslint-disable-next-line
   const { loading, error, data} = useQuery(ALL_AUTHORS)
 
@@ -43,7 +43,7 @@ const Authors = ({ show, isLoggedIn, setError }) => {
             </th>
           </tr>
           {authors.map(a =>
-            <tr key={a.id}>
+            <tr key={a.name}>
               <td>{a.name}</td>
               <td>{a.born}</td>
               <td>{a.bookCount}</td>
@@ -51,9 +51,9 @@ const Authors = ({ show, isLoggedIn, setError }) => {
           )}
         </tbody>
       </table>
-      {/* <EditAuthor setError={setError} /> */}
+      {/* <EditAuthor setNotification={setNotification} /> */}
       {
-        isLoggedIn && <EditAuthorSelect authors={authors} setError={setError} />
+        isLoggedIn && <EditAuthorSelect authors={authors} setNotification={setNotification} />
       }
     </div>
   )

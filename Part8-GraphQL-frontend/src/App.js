@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react'
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient, useSubscription } from '@apollo/client'
 
 import Authors from './components/Authors'
 import Books from './components/Books'
@@ -9,10 +9,12 @@ import NewBook from './components/NewBook'
 import Login from './components/Login'
 import Notification from './components/Notification'
 
+import { ALL_AUTHORS, ALL_BOOKS, BOOK_ADDED } from './queries'
+
 const App = () => {
   const [page, setPage] = useState('authors')
   const [user, setUser] = useState(null)
-  const [error, setError] = useState(null)
+  const [notification, setNotification] = useState(null)
   const [token, setToken] = useState(null)
 
   const client = useApolloClient()
@@ -31,10 +33,38 @@ const App = () => {
     setPage('authors')
   }, [token])
 
-  const notify = message => {
-    setError(message)
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const newBook = subscriptionData.data.bookAdded
+      const { allBooks } = client.readQuery({ query: ALL_BOOKS })
+
+      if (!allBooks.includes(newBook)) {
+        client.writeQuery({
+          query: ALL_BOOKS,
+          data: {
+            allBooks: allBooks.concat(newBook)
+          }
+        })
+      }
+
+      const { allAuthors } = client.readQuery({ query: ALL_AUTHORS })
+      const author = allAuthors.find(author => author.name === newBook.author.name)
+      
+      client.writeQuery({
+        query: ALL_AUTHORS,
+        data: {
+          allAuthors: !author ? allAuthors.concat(newBook.author) : allAuthors
+        }
+      })
+
+      notify(`BOOK ADDED: ${newBook.title} by ${newBook.author.name}`)
+    }
+  })
+
+  const notify = (message, isError = false) => {
+    setNotification({ message, isError })
     setTimeout(() => {
-      setError(null)
+      setNotification(null)
     }, 3000);
   }
 
@@ -62,11 +92,11 @@ const App = () => {
               <button onClick={() => setPage('login')}>login</button>
         }      
       </div>
-      <Notification errorMessage={error} />
+      <Notification notification={notification} />
       <Authors
         show={page === 'authors'}
         isLoggedIn={token !== null}
-        setError={notify}
+        setNotification={notify}
       />
 
       <Books
@@ -82,7 +112,7 @@ const App = () => {
       <NewBook
         show={page === 'add'} 
         user={user}
-        setError={notify}
+        setNotification={notify}
         ref={newBookRef}
       />
 
@@ -90,7 +120,7 @@ const App = () => {
         show={page === 'login'} 
         setUser={setUser}
         setToken={setToken}
-        setError={notify}
+        setNotification={notify}
       />
 
     </div>

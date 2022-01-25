@@ -2,19 +2,19 @@ import React, { useState, useEffect } from 'react'
 import { useMutation } from '@apollo/client'
 import { EDIT_AUTHOR_BIRTHYEAR, ALL_AUTHORS } from '../queries'
 
-const EditAuthor = ({ setError }) => {
+const EditAuthor = ({ setNotification }) => {
     const [ name, setName ] = useState('')
     const [ birthYear, setBirthYear ] = useState('')
     const [ changeBirthYear ] = useMutation(EDIT_AUTHOR_BIRTHYEAR, {
         //refetchQueries: [{ query: ALL_AUTHORS }],
         onError: error => {
-            setError(error.message)
+            setNotification(error.message, true)
         }
     })
 
     // useEffect(() => {
     //     if (result.data && result.data.editAuthor === null) {
-    //         setError('Author not found')
+    //         setNotification('Author not found')
     //     }
     // }, [result.data]) // eslint-disable-line
 
@@ -23,7 +23,7 @@ const EditAuthor = ({ setError }) => {
 
         const result = await changeBirthYear({ variables: { name, birthYear: Number(birthYear) } })
         if (result.data && result.data.editAuthor === null) {
-            setError('Author not found')
+            setNotification('Author not found', true)
         }
 
         setName('')

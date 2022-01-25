@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useQuery, useMutation, useApolloClient } from '@apollo/client'
 import { LOGIN_USER, LOGGED_IN_USER } from '../queries'
 
-const Login = ({ show, setUser, setToken, setError }) => {
+const Login = ({ show, setUser, setToken, setNotification }) => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const userResult = useQuery(LOGGED_IN_USER)
@@ -12,7 +12,7 @@ const Login = ({ show, setUser, setToken, setError }) => {
 
     const [login, result] = useMutation(LOGIN_USER, {
         onError: (error) => {
-            setError(error.message)
+            setNotification(error.message, true)
             usernameRef.current.focus()
         },
         onCompleted: (data) => {

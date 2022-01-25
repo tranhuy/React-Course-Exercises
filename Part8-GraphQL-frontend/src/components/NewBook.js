@@ -2,7 +2,7 @@ import React, { useState, useImperativeHandle } from 'react'
 import { ADD_BOOK, ALL_BOOKS, ALL_AUTHORS, BOOKS_BY_GENRE } from '../queries'
 import { useMutation } from '@apollo/client'
 
-const NewBook = React.forwardRef(({ show, user, setError }, ref) => {
+const NewBook = React.forwardRef(({ show, user, setNotification }, ref) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [published, setPublished] = useState('')
@@ -10,9 +10,9 @@ const NewBook = React.forwardRef(({ show, user, setError }, ref) => {
   const [genres, setGenres] = useState([])
 
   const [ addBook ] = useMutation(ADD_BOOK, {
-    refetchQueries: [ { query: ALL_BOOKS }, { query: ALL_AUTHORS }], 
+    //refetchQueries: [ { query: ALL_BOOKS }, { query: ALL_AUTHORS }], 
     onError: (error) => {
-      setError(error.message)
+      setNotification(error.message, true)
     },
     update: (cache, { data }) => {
       const { allBooks } = cache.readQuery({ query: BOOKS_BY_GENRE, variables: { genre: user.favoriteGenre } })
@@ -53,7 +53,7 @@ const NewBook = React.forwardRef(({ show, user, setError }, ref) => {
     event.preventDefault()
     
     if (!title || !author || !published || genres.length === 0) {
-      setError('Cannot have empty fields')
+      setNotification('Cannot have empty fields', true)
       return
     }
 

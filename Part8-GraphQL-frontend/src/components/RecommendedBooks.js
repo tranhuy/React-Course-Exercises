@@ -5,7 +5,6 @@ import { LOGGED_IN_USER, BOOKS_BY_GENRE } from '../queries'
 
 const RecommendedBooks = ({ show, user }) => {
     const [books, setBooks] = useState([])
-    const userResult = useQuery(LOGGED_IN_USER)  
     const [getBooks, booksResult] = useLazyQuery(BOOKS_BY_GENRE)
 
     const getBooksByGenre = genre => {
