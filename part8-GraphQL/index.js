@@ -6,7 +6,9 @@ const { makeExecutableSchema } = require('@graphql-tools/schema')
 const { ApolloServer, UserInputError, AuthenticationError, gql } = require('apollo-server-express')
 const { ApolloServerPluginLandingPageGraphQLPlayground } = require('apollo-server-core')
 const { PubSub } = require('graphql-subscriptions')
+const DataLoader = require('dataloader')
 const mongoose = require('mongoose')
+const _ = require('lodash')
 const { v1: uuid } = require('uuid')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
@@ -99,7 +101,35 @@ const typeDefs = gql`
     }
 `
 
+const batchBooksByAuthor = async (authorNames) => {
+  const books = await Book.aggregate([
+    {
+      $lookup: {
+        from: 'authors',
+        localField: 'author',
+        foreignField: '_id',
+        as: 'author_details'       
+      }
+    },
+    { $unwind: '$author_details' },
+    { 
+      $match: {
+        $expr: { $in: [ '$author_details.name', authorNames ]}
+      }
+    },
+  ])
+
+  const authorsByName = _.groupBy(books, 'author_details.name')
+
+  return authorNames.map(name => authorsByName[name])
+}
+
 const resolvers = {
+  Author: {
+    bookCount: async (root, args, { loaders }) => {
+      return await loaders.bookLoader.load(root.name).then(results => results.length)
+    }
+  },
   Query: {
       bookCount: () => Book.collection.countDocuments(),
       authorCount: () => Author.collection.countDocuments(),
@@ -141,12 +171,10 @@ const resolvers = {
           let author = await Author.findOne({ name: args.author })
           //Add new author if author name provided in mutation args does not exist
           if (!author) {
-            author = new Author({ name: args.author, bookCount: 1 })           
-          } else {
-            author.bookCount++
-          }
+            author = new Author({ name: args.author })   
+            await author.save()        
+          } 
 
-          await author.save() 
           newBook.author = author         
           await newBook.save()
         } catch (error) {
@@ -250,14 +278,20 @@ const resolvers = {
       ApolloServerPluginLandingPageGraphQLPlayground( { subscriptionEndpoint: `ws://localhost:${PORT}/subscriptions`} )
     ],
     context: async ({ req }) => {
+      const loaders = {
+        bookLoader: new DataLoader(batchBooksByAuthor)
+      }
+
       const auth = req ? req.headers.authorization : null
 
       if (auth && auth.toLowerCase().startsWith('bearer ')) {
         const decodedToken = jwt.verify(auth.substring(7), process.env.SECRET)
         const currentUser = await User.findById(decodedToken.id)
 
-        return { currentUser }
+        return { currentUser, loaders }
       }
+
+      return { loaders }
     },
   })
 
