@@ -127,6 +127,11 @@ const batchBooksByAuthor = async (authorNames) => {
 const resolvers = {
   Author: {
     bookCount: async (root, args, { loaders }) => {
+      if (!loaders) {
+        loaders = {
+          bookLoader: new DataLoader(batchBooksByAuthor)
+        }
+      }
       return await loaders.bookLoader.load(root.name).then(results => results.length)
     }
   },
