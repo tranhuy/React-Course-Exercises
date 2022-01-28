@@ -13,7 +13,7 @@ interface ExerciseInput {
     trainingLog: Array<number>;
 }
 
-const parseInput = (args: Array<string>) : ExerciseInput => {
+const parseInputArgs = (args: Array<string>) : ExerciseInput => {
     if (args.length < 4) throw new Error('Not enough arguments');
 
     let inputArgs = args.slice(2).map(n => {
@@ -67,7 +67,7 @@ const calculateExercise = (target: number, trainingLog: Array<number>) : Exercis
 }
 
 try {
-    const { target, trainingLog } = parseInput(process.argv);
+    const { target, trainingLog } = parseInputArgs(process.argv);
     console.log(calculateExercise(target, trainingLog));
 } catch (error: unknown) {
     let errorMessage: string = '';
