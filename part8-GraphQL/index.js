@@ -293,7 +293,7 @@ const resolvers = {
         const decodedToken = jwt.verify(auth.substring(7), process.env.SECRET)
         const currentUser = await User.findById(decodedToken.id)
 
-        return { currentUser, loaders }
+        return { currentUser, loaders } 
       }
 
       return { loaders }
