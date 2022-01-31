@@ -54,8 +54,8 @@ export const calculateExercise = (exerciseParams: ExerciseInput) : ExerciseResul
         success = true;
         rating = { score: 2, description: 'Target met.  Good work' }
     } else {
-        success = false;
-        rating = { score: 1, description: 'Exceeded target.  Excellent work!' }
+        success = true;
+        rating = { score: 3, description: 'Exceeded target.  Excellent work!' }
     }
 
     return {

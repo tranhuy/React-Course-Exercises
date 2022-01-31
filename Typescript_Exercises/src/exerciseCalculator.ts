@@ -51,7 +51,7 @@ const calculateExercise = (target: number, trainingLog: Array<number>) : Exercis
         success = true;
         rating = { score: 2, description: 'Target met.  Good work' }
     } else {
-        success = false;
+        success = true;
         rating = { score: 1, description: 'Exceeded target.  Excellent work!' }
     }
 
