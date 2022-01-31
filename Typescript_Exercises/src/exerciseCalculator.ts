@@ -52,7 +52,7 @@ const calculateExercise = (target: number, trainingLog: Array<number>) : Exercis
         rating = { score: 2, description: 'Target met.  Good work' }
     } else {
         success = true;
-        rating = { score: 1, description: 'Exceeded target.  Excellent work!' }
+        rating = { score: 3, description: 'Exceeded target.  Excellent work!' }
     }
 
     return {
