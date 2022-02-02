@@ -1,0 +1,10 @@
+POST http://localhost:3002/api/patients
+Content-Type: application/json
+
+{
+    "name": "James Hetfield",
+    "dateOfBirth": "1990-02-03",
+    "ssn": "fdsfsd",
+    "gender": "male",
+    "occupation": ""
+}
