@@ -1,17 +1,16 @@
 import React from 'react';
-import { ChapterDetails } from '../types';
+import Part from './Part';
+import { CoursePart } from '../types'
 
 interface ContentProps {
-    chapters: Array<ChapterDetails>;
+    parts: Array<CoursePart>;
 }
 
-const Content = ({ chapters }: ContentProps) => {
+const Content = ({ parts }: ContentProps) => {
     return (
         <>
-            {chapters.map(chapter => (
-                <p key={chapter.name}>
-                    {chapter.name} {chapter.exerciseCount}
-                </p>
+            {parts.map(part => (
+                <Part key={part.name} part={part} />
             ))}
         </>
     );

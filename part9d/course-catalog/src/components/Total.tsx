@@ -1,16 +1,15 @@
 import React from 'react';
-import { ChapterDetails } from '../types';
+import { CoursePart } from '../types';
 
 interface TotalProps {
-    chapters: Array<ChapterDetails>;
+    parts: Array<CoursePart>;
 }
 
-const Total = ({ chapters }: TotalProps) => {
+const Total = ({ parts }: TotalProps) => {
      return (
-         <div>
-             <strong>Number of exercises: </strong>
-             {chapters.reduce((counter, chapter) => counter + chapter.exerciseCount, 0)}
-         </div>
+         <h2>
+             Number of exercises: {parts.reduce((counter, part) => counter + part.exerciseCount, 0)}
+         </h2>
      )
 }
 
