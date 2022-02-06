@@ -3,6 +3,13 @@ import { PatientData, NonSensitivePatientData, NewPatientData } from '../types';
 import { v1 as uuid } from 'uuid';
 
 const patients: Array<PatientData> = patientData as Array<PatientData>;
+const patientsWithEntries: Array<PatientData> = patients.map(p => {
+                                                    if (!p.entries) {
+                                                        return { ...p, entries: [] };
+                                                    }
+                                                    
+                                                    return p;
+                                                });
 
 const getAll = (): Array<PatientData> => {
     return patients;
@@ -16,6 +23,16 @@ const getNonSensitive = () : Array<NonSensitivePatientData> => {
     return nonSensitivePatients;
 }
 
+const getPatientData = (id: string): PatientData => {
+    const patient = patientsWithEntries.find(p => p.id === id);
+
+    if (!patient) {
+        throw new Error('Patient not found');
+    }
+
+    return patient;
+}
+
 const addPatient = (patient : NewPatientData): PatientData => {
     const newPatient = {
         id: uuid(),
@@ -27,5 +44,5 @@ const addPatient = (patient : NewPatientData): PatientData => {
 }
 
 export default {
-    getAll, getNonSensitive, addPatient
+    getAll, getNonSensitive, getPatientData, addPatient
 };

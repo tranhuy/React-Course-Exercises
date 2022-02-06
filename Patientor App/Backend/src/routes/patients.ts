@@ -5,8 +5,18 @@ import { toNewPatientData } from '../utils';
 const router = express.Router();
 
 router.get('/', (_req, res) => {
-    res.send(patientService.getNonSensitive());
+    res.send(patientService.getAll());
 });
+
+router.get('/:id', (req, res) => {
+    try {
+        res.send(patientService.getPatientData(req.params.id));
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            res.status(400).json({ error: error.message })
+        }
+    }
+});  
 
 router.post('/', (req, res) => {
     try {
