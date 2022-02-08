@@ -7,6 +7,8 @@ import { apiBaseUrl } from "../constants";
 import { Gender, Patient } from "../types";
 import { Icon } from "semantic-ui-react";
 
+import Entries from "./Entries";
+
 const PatientDetailsPage = () => {
     const { id } = useParams<{ id: string}>();
     const [ { patients }, dispatch ] = useStateValue();
@@ -53,6 +55,7 @@ const PatientDetailsPage = () => {
             <h2>{patient.name} {getGenderIcon(patient.gender)}</h2>
             <div>ssn: {patient.ssn}</div>
             <div>occupation: {patient.occupation}</div>
+            <Entries entries={patient.entries} />
         </div>
     );
 };
