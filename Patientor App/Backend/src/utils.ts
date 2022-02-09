@@ -1,4 +1,4 @@
-import { NewPatientData, Gender, Entry } from "./types";
+import { NewPatientData, Gender } from "./types";
 
 type Fields = { 
     name: unknown;
@@ -9,14 +9,13 @@ type Fields = {
     entries: unknown;
 }
 
-export const toNewPatientData = ({ name, dateOfBirth, ssn, gender, occupation, entries }: Fields): NewPatientData => {
+export const toNewPatientData = ({ name, dateOfBirth, ssn, gender, occupation }: Fields): NewPatientData => {
     const newPatient: NewPatientData = {
         name: parseName(name),
         dateOfBirth: parseDateOfBirth(dateOfBirth),
         ssn: parseSsn(ssn),
         gender: parseGender(gender),
         occupation: parseOccupation(occupation),
-        entries: parseEntries(entries)
     }
 
     return newPatient;
@@ -72,12 +71,4 @@ const isDate = (date: string): boolean => {
 
 const isGender = (gender: any): gender is Gender => {
     return Object.values(Gender).includes(gender);
-}
-
-const parseEntries = (entries: unknown): Entry[] => {
-    if (!entries) {
-        return [];
-    }
-
-    return [];
 }

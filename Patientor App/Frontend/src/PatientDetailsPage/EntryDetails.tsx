@@ -21,9 +21,14 @@ const EntryDetails: React.FC<{ entry: Entry }>= ({ entry }) => {
 
 export default EntryDetails;
 
-const HositalEntry: React.FC<{ entry: Entry }>= ({ entry }) => {
-    if (entry.type !== "Hospital") return null;
+type HositalEntryProps = {
+    discharge: {
+        date: string,
+        criteria: string
+    }
+};
 
+const HositalEntry = ({ entry }: { entry: HositalEntryProps }) => {
     return (
         <div>
             <div>Discharge Date: {entry.discharge.date}</div>
@@ -32,7 +37,7 @@ const HositalEntry: React.FC<{ entry: Entry }>= ({ entry }) => {
     );
 };
 
-const OccupationalHealthCareEntry: React.FC<{ entry: Entry }>= ({ entry }) => {
+const OccupationalHealthCareEntry =  ({ entry }: { entry: Entry }) => {
     if (entry.type !== "OccupationalHealthcare") return null;
 
     return (
@@ -45,7 +50,7 @@ const OccupationalHealthCareEntry: React.FC<{ entry: Entry }>= ({ entry }) => {
     );
 };
 
-const HealthCheckEntry: React.FC<{ entry: Entry }>= ({ entry }) => {
+const HealthCheckEntry =  ({ entry }: { entry: Entry }) => {
     if (entry.type !== "HealthCheck") return null;
 
     return (

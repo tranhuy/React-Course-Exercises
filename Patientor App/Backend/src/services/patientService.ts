@@ -36,6 +36,7 @@ const getPatientData = (id: string): PatientData => {
 const addPatient = (patient : NewPatientData): PatientData => {
     const newPatient = {
         id: uuid(),
+        entries: [],
         ...patient
     };
 
