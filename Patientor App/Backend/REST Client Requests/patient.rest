@@ -12,3 +12,52 @@ Content-Type: application/json
 ###
 
 GET http://localhost:3002/api/patients/d2773336-f723-11e9-8f0b-362b9e155667
+
+### Hospital Entry Creation
+
+POST http://localhost:3002/api/patients/d2773822-f723-11e9-8f0b-362b9e155667
+Content-Type: application/json
+
+{
+    "type": "Hospital",
+    "description": "Test Hospital Entry",
+    "date": "2022-02-09",
+    "specialist": "Dr. Huy Tran",
+    "diagnosisCodes": ["H54.7", "L60.1", "Z74.3"],
+    "discharge": {
+        "date": "2022-02-11",
+        "criteria": "Feeling much better."
+    }
+}
+
+### OccupationalHealthcare Entry Creation
+
+POST http://localhost:3002/api/patients/d2773822-f723-11e9-8f0b-362b9e155667
+Content-Type: application/json
+
+{
+    "type": "OccupationalHealthcare",
+    "description": "Test OccupationHealthCare Entry",
+    "date": "2022-01-12",
+    "specialist": "Dr. Amy Adams",
+    "diagnosisCodes": ["N30.0", "J06.9"],
+    "employerName": "UHN",
+    "sickLeave": {
+        "startDate": "2022-02-01",
+        "endDate": "2022-02-20"
+    }
+}
+
+### Healthcheck Entry Creation
+
+POST http://localhost:3002/api/patients/d2773822-f723-11e9-8f0b-362b9e155667
+Content-Type: application/json
+
+{
+    "type": "HealthCheck",
+    "description": "Test HealthCheck Entry",
+    "date": "2022-01-24",
+    "specialist": "Dr. Jessica Le",
+    "diagnosisCodes": ["J12.82"],
+    "healthCheckRating": 1
+}

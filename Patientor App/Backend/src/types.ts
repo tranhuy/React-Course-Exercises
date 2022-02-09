@@ -12,7 +12,7 @@ interface BaseEntry {
     diagnosisCodes?: Array<DiagnosisData['code']>;
 }
 
-interface OccupationalHealthCareEntry extends BaseEntry {
+export interface OccupationalHealthCareEntry extends BaseEntry {
     type: "OccupationalHealthcare";
     employerName: string;
     sickLeave?: { 
@@ -21,7 +21,7 @@ interface OccupationalHealthCareEntry extends BaseEntry {
     }
 }
 
-interface HospitalEntry extends BaseEntry {
+export interface HospitalEntry extends BaseEntry {
     type: "Hospital";
     discharge: {
         date: string,
@@ -36,7 +36,7 @@ export enum healthCheckRating {
     "CriticalRisk" = 3
 }
 
-interface HealthCheckEntry extends BaseEntry {
+export interface HealthCheckEntry extends BaseEntry {
     type: "HealthCheck";
     healthCheckRating: healthCheckRating;
 }
@@ -56,6 +56,11 @@ export interface PatientData {
 export type NonSensitivePatientData = Omit<PatientData, 'ssn' | 'entries'>;
 
 export type NewPatientData = Omit<PatientData, 'id' | 'entries'>;
+
+// Define special omit for unions
+type UnionOmit<T, K extends string | number | symbol> = T extends unknown ? Omit<T, K> : never;
+
+export type NewEntryData = UnionOmit<Entry, 'id'>;
 
 export enum Gender {
     Male = 'male',
