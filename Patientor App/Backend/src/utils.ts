@@ -114,10 +114,10 @@ export const toNewEntryData = ({ type, description, date, specialist, diagnosisC
             const { employerName, sickLeave } = otherFields as OccupationalHealthCareEntry;
             const occupationalHealthcareEntry = {
                 employerName,
-                sickLeave: {
+                sickLeave: sickLeave ? {
                     startDate: parseDate(sickLeave?.startDate),
                     endDate: parseDate(sickLeave?.endDate)
-                }
+                } : undefined
             }
             newEntry = { ...newEntryBase, type: "OccupationalHealthcare", ...occupationalHealthcareEntry };
             break;
