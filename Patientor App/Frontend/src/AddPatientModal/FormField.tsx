@@ -1,37 +1,60 @@
-import React from "react";
+import React, { FormEvent } from "react";
 import { ErrorMessage, Field, FieldProps, FormikProps } from "formik";
 import { Dropdown, DropdownProps, Form } from "semantic-ui-react";
-import { Diagnosis, Gender } from "../types";
+import { Diagnosis, Gender, healthCheckRating } from "../types";
 
 // structure of a single option
-export type GenderOption = {
+interface BaseOption {
+  value: string | number;
+  label: string;
+}
+
+export interface GenderOption extends BaseOption {
   value: Gender;
   label: string;
-};
+}
+
+export interface HealthCheckRatingOption extends BaseOption {
+  value: healthCheckRating;
+  label: string;
+}
 
 // props for select field component
-type SelectFieldProps = {
+type SelectFieldProps<T> = {
   name: string;
   label: string;
-  options: GenderOption[];
+  options: T[];
+  optionsToNumbers?: boolean;
+  setFieldValue: FormikProps<string>["setFieldValue"];
 };
 
-export const SelectField = ({
+export const SelectField = <T extends BaseOption>({
   name,
   label,
-  options
-}: SelectFieldProps) => (
-  <Form.Field>
-    <label>{label}</label>
-    <Field as="select" name={name} className="ui dropdown">
-      {options.map(option => (
-        <option key={option.value} value={option.value}>
-          {option.label || option.value}
-        </option>
-      ))}
-    </Field>
-  </Form.Field>
-);
+  options,
+  setFieldValue
+}: SelectFieldProps<T>) => {
+    const parseOptionValue = (value: string) => {
+      if (typeof options[0]['value'] === 'number') {
+        setFieldValue(name, parseInt(value));
+      } else {
+        setFieldValue(name, value);
+      }
+    };
+
+    return (
+      <Form.Field>
+        <label>{label}</label>
+        <Field as="select" name={name} className="ui dropdown" onChange={(e: FormEvent<HTMLInputElement>) => parseOptionValue(e.currentTarget.value)}>
+          {options.map(option => (
+            <option key={option.value} value={option.value}>
+              {option.label || option.value}
+            </option>
+          ))}
+        </Field>
+      </Form.Field>
+    );
+};
 
 interface TextProps extends FieldProps {
   label: string;

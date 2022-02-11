@@ -2,14 +2,13 @@ import patientData from '../../data/patients';
 import { PatientData, NonSensitivePatientData, NewPatientData, NewEntryData } from '../types';
 import { v1 as uuid } from 'uuid';
 
-const patients: Array<PatientData> = patientData as Array<PatientData>;
-const patientsWithEntries: Array<PatientData> = patients.map(p => {
-                                                    if (!p.entries) {
-                                                        return { ...p, entries: [] };
-                                                    }
-                                                    
-                                                    return p;
-                                                });
+const patients: Array<PatientData> = patientData.map(p => {
+                                        if (!p.entries) {
+                                            return { ...p, entries: [] };
+                                        }
+                                        
+                                        return p;
+                                    });
 
 const getAll = (): Array<PatientData> => {
     return patients;
@@ -24,7 +23,7 @@ const getNonSensitive = () : Array<NonSensitivePatientData> => {
 }
 
 const getPatientData = (id: string): PatientData => {
-    const patient = patientsWithEntries.find(p => p.id === id);
+    const patient = patients.find(p => p.id === id);
 
     if (!patient) {
         throw new Error('Patient not found');
@@ -47,7 +46,7 @@ const addPatient = (patient : NewPatientData): PatientData => {
 const addPatientEntry = (entry: NewEntryData, patiendId: string): PatientData => {
     let patientIndex = -1;
     
-    patientsWithEntries.forEach((patient, index) => {
+    patients.forEach((patient, index) => {
         if (patient.id == patiendId) {
             patientIndex = index;
             const newEntry = {
@@ -62,7 +61,7 @@ const addPatientEntry = (entry: NewEntryData, patiendId: string): PatientData =>
         throw Error('Patient not found');
     }
 
-    return patientsWithEntries[patientIndex];
+    return patients[patientIndex];
 };
 
 export default {

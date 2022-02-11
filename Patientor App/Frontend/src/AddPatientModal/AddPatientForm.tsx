@@ -47,11 +47,11 @@ export const AddPatientForm = ({ onSubmit, onCancel } : Props ) => {
         }
         if (!values.occupation) {
           errors.occupation = requiredError;
-        }
+        }       
         return errors;
       }}
     >
-      {({ isValid, dirty }) => {
+      {({ isValid, dirty, setFieldValue }) => {
         return (
           <Form className="form ui">
             <Field
@@ -82,6 +82,7 @@ export const AddPatientForm = ({ onSubmit, onCancel } : Props ) => {
               label="Gender"
               name="gender"
               options={genderOptions}
+              setFieldValue={setFieldValue}
             />
             <Grid>
               <Grid.Column floated="left" width={5}>

@@ -8,7 +8,7 @@ import EntryDetails from "./EntryDetails";
 const Entries = ({ entries }: { entries: Entry[] }) => {
     const [ { diagonses }, ] = useStateValue();
     return (
-        <section style={{ display: 'flex', flexDirection: 'column', rowGap: '6px' }}>
+        <section style={{ display: 'flex', flexDirection: 'column', rowGap: '6px', marginBottom: '10px' }}>
             <div></div>
             <h3>Entries</h3>
             {
