@@ -35,7 +35,8 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
                 healthCheckRating: 0             
             }}
             onSubmit={ values => {
-                onSubmit(values as EntryFormValues);       
+                const rating = Number(values.healthCheckRating);
+                onSubmit({ ...values, healthCheckRating: rating } as EntryFormValues);       
             }}
             validate={values => {
                 const requiredError = "Field is required";
@@ -84,7 +85,6 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
                             label="Health Check Rating"
                             name="healthCheckRating"
                             options={healthCheckRatingsOptions}
-                            setFieldValue={setFieldValue}
                         />
                         <DiagnosisSelection 
                             setFieldValue={setFieldValue}

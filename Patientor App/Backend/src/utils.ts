@@ -177,7 +177,7 @@ const parseDiagnosisCodes = (codes: unknown): string[] | undefined => {
 }
 
 const parseHealthCheckRating = (rating: unknown): healthCheckRating => {
-    if (!rating || !isHealthCheckRating(rating)) {
+    if (rating === undefined || !isHealthCheckRating(rating)) {
         throw new Error('Incorrect or missing healthcheck rating');
     }
 

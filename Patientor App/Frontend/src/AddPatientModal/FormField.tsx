@@ -1,4 +1,4 @@
-import React, { FormEvent } from "react";
+import React from "react";
 import { ErrorMessage, Field, FieldProps, FormikProps } from "formik";
 import { Dropdown, DropdownProps, Form } from "semantic-ui-react";
 import { Diagnosis, Gender, healthCheckRating } from "../types";
@@ -25,27 +25,17 @@ type SelectFieldProps<T> = {
   label: string;
   options: T[];
   optionsToNumbers?: boolean;
-  setFieldValue: FormikProps<string>["setFieldValue"];
 };
 
 export const SelectField = <T extends BaseOption>({
   name,
   label,
-  options,
-  setFieldValue
+  options
 }: SelectFieldProps<T>) => {
-    const parseOptionValue = (value: string) => {
-      if (typeof options[0]['value'] === 'number') {
-        setFieldValue(name, parseInt(value));
-      } else {
-        setFieldValue(name, value);
-      }
-    };
-
     return (
       <Form.Field>
         <label>{label}</label>
-        <Field as="select" name={name} className="ui dropdown" onChange={(e: FormEvent<HTMLInputElement>) => parseOptionValue(e.currentTarget.value)}>
+        <Field as="select" name={name} className="ui dropdown">
           {options.map(option => (
             <option key={option.value} value={option.value}>
               {option.label || option.value}
