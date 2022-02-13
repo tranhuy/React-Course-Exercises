@@ -1,6 +1,7 @@
-import React from "react";
-import { Grid, Button } from "semantic-ui-react";
-import { Field, Formik, Form } from "formik";
+import React, { useState, useEffect } from "react";
+import { Grid, Button, Radio, Form } from "semantic-ui-react";
+import { Field, Formik, Form as FormikForm } from "formik";
+import * as Yup from "yup";
 import { useStateValue } from "../state";
 
 import { Entry, healthCheckRating } from "../types";
@@ -23,41 +24,105 @@ const healthCheckRatingsOptions: HealthCheckRatingOption[] = [
 
 const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
     const [{ diagonses }] = useStateValue();
+    const [ entryType, setEntryType ] = useState('HealthCheck');
+
+    const entryInitValues = {
+        description: "",
+        date: "",
+        specialist: "",
+        diagnosisCodes: undefined
+    };
+
+    const healthCheckEntryInitValues = {
+        type: "HealthCheck",
+        healthCheckRating: 0
+    };
+
+    const occHealthCareEntryInitValues = {
+        type: "OccupationalHealthcare",
+        employerName: "",
+        sickLeave: {
+            startDate: "",
+            endDate: ""
+        }
+    };
+
+    // const hospitalEntryEntryInitValues = {
+    //     ...entryInitValues,
+    //     type: "Hospital",
+    //     discharge: {
+    //         date: "",
+    //         criteria: ""
+    //     }
+    // };
 
     return (
         <Formik
-            initialValues={{
-                description: "",
-                date: "",
-                specialist: "",
-                diagnosisCodes: undefined,
-                type: "HealthCheck",
-                healthCheckRating: 0             
-            }}
+            initialValues={{ ...entryInitValues, healthCheckEntryInitValues, occHealthCareEntryInitValues }}
             onSubmit={ values => {
-                const rating = Number(values.healthCheckRating);
-                onSubmit({ ...values, healthCheckRating: rating } as EntryFormValues);       
+                if (entryType === 'HealthCheck') {
+                    const rating = Number(values.healthCheckEntryInitValues.healthCheckRating);
+                    onSubmit({ ...values, ...values.healthCheckEntryInitValues, healthCheckRating: rating } as EntryFormValues);
+                } 
+                
+                if (entryType === 'OccupationalHealthcare') {
+                    const sickLeave = (!values.occHealthCareEntryInitValues.sickLeave.startDate || !values.occHealthCareEntryInitValues.sickLeave.endDate) ? undefined : values.occHealthCareEntryInitValues.sickLeave;
+                    onSubmit({ ...values, ...values.occHealthCareEntryInitValues, sickLeave } as EntryFormValues);
+                }
             }}
-            validate={values => {
-                const requiredError = "Field is required";
-                const errors: { [field: string]: string } = {};
+            validationSchema={Yup.object().shape({
+                description: Yup.string().required("Field is required"),
+                date: Yup.string().required("Field is required"),
+                specialist: Yup.string().required("Field is required"),                
+                occHealthCareEntryInitValues: Yup.object().shape({
+                    employerName: entryType === 'OccupationalHealthcare' ? Yup.string().required("Field is required") : Yup.string()
+                })
+            })}
+            // validate={values => {
+            //     const requiredError = "Field is required";
+            //     const errors: { [field: string]: string } = {};
 
-                if (!values.description) {                
-                    errors.description = requiredError;
-                }
-                if (!values.date) {
-                    errors.date = requiredError;
-                }
-                if (!values.specialist) {
-                    errors.specialist = requiredError;
-                }
+            //     if (!values.description) {   
+            //         errors['description'] = requiredError;
+            //     }
+            //     if (!values.date) {
+            //         errors['date'] = requiredError;
+            //     }
+            //     if (!values.specialist) {
+            //         errors['specialist'] = requiredError;
+            //     }
 
-                return errors;
-            }}
+            //     return errors;
+            // }}
         >
-            {({ isValid, dirty, setFieldValue, setFieldTouched }) => {
+            {({ isValid, dirty, setFieldValue, setFieldTouched, validateForm }) => {
+                useEffect(() => {
+                    void validateForm();
+                }, [entryType]);
+
                 return (
-                    <Form className="form ui">
+                    <FormikForm className="form ui">
+                        <div className="inline fields">
+                            <label>Entry Type :</label>
+                            <Form.Field>
+                                <Radio 
+                                    label="Health Check" 
+                                    name="entryType" 
+                                    value="HealthCheck" 
+                                    checked={entryType === "HealthCheck"}
+                                    onChange={() => setEntryType("HealthCheck")} 
+                                />
+                            </Form.Field>
+                            <Form.Field>
+                                <Radio 
+                                    label="Occupational Healthcare" 
+                                    name="entryType" 
+                                    value="OccupationalHealthcare"  
+                                    checked={entryType === "OccupationalHealthcare"} 
+                                    onChange={() => setEntryType("OccupationalHealthcare")} 
+                                />
+                            </Form.Field>
+                        </div>
                         <Field 
                             label="Description"
                             name="description"
@@ -74,18 +139,35 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
                             name="specialist"
                             component={TextField}
                         />
-                        {/* <Field
-                            label="HealthCheckRating"
-                            name="healthCheckRating"
-                            component={NumberField}
-                            min={0}
-                            max={3}
-                        /> */}
-                        <SelectField 
-                            label="Health Check Rating"
-                            name="healthCheckRating"
-                            options={healthCheckRatingsOptions}
-                        />
+
+                        {entryType === "OccupationalHealthcare" &&
+                            <>
+                                <Field 
+                                    label="Employer Name"
+                                    name="occHealthCareEntryInitValues.employerName"
+                                    component={TextField}
+                                />
+                                <div className="inline fields">
+                                    <label>Sick Leave</label>
+                                    <Field 
+                                        name="occHealthCareEntryInitValues.sickLeave.startDate"
+                                        component={TextField}
+                                    />
+                                    <Field 
+                                        name="occHealthCareEntryInitValues.sickLeave.endDate"
+                                        component={TextField}
+                                    />
+                                </div>
+                            </>
+                        }
+
+                        {entryType === "HealthCheck" &&
+                            <SelectField 
+                                label="Health Check Rating"
+                                name="healthCheckEntryInitValues.healthCheckRating"
+                                options={healthCheckRatingsOptions}
+                            />
+                        }
                         <DiagnosisSelection 
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
@@ -106,7 +188,7 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
                                 </Button>
                             </Grid.Column>
                         </Grid>
-                    </Form>
+                    </FormikForm>
                 );
             }}
         </Formik>
