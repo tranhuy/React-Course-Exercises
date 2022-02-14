@@ -13,6 +13,7 @@ export type EntryFormValues =  UnionOmit<Entry, 'id'>;
 interface Props {
     onSubmit: (values: EntryFormValues) => void;
     onCancel: () => void;
+    setModalTitle: (title: string) => void;
 }
 
 const healthCheckRatingsOptions: HealthCheckRatingOption[] = [    
@@ -22,9 +23,20 @@ const healthCheckRatingsOptions: HealthCheckRatingOption[] = [
     { value: healthCheckRating.CriticalRisk, label: `${healthCheckRating.CriticalRisk} - ${healthCheckRating[healthCheckRating.CriticalRisk]}` }
 ];
 
-const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
+const AddEntryForm = ({ onSubmit, onCancel, setModalTitle }: Props) => {
     const [{ diagonses }] = useStateValue();
     const [ entryType, setEntryType ] = useState('HealthCheck');
+
+    useEffect(() => {
+        switch (entryType) {
+            case "HealthCheck":
+                setModalTitle("Add Healthcheck Entry");
+                break;
+            case "OccupationalHealthcare":
+                setModalTitle("Add Occupational Healthcare Entry");
+                break;
+        }
+    }, [entryType]);
 
     const entryInitValues = {
         description: "",

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Modal, Segment } from "semantic-ui-react";
 import AddEntryForm, { EntryFormValues } from "./AddEntryForm";
 
@@ -10,15 +10,21 @@ interface Props {
 }
 
 const AddEntryModal = ({ modalOpen, onClose, onSubmit, error }: Props) => {
-     return (
-         <Modal open={modalOpen} onClose={onClose} centered={false} closeIcon>
-             <Modal.Header>Add a new entry</Modal.Header>
-             <Modal.Content>
-                {error && <Segment inverted color="red">{`Error: ${error}`}</Segment>}
-                <AddEntryForm onSubmit={onSubmit} onCancel={onClose} />
-             </Modal.Content>
-         </Modal>
-     );
+    const [ title, setTitle ] = useState('');
+
+    const setModalTitle = (title: string) => {
+        setTitle(title);
+    };
+
+    return (
+        <Modal open={modalOpen} onClose={onClose} centered={false} closeIcon>
+            <Modal.Header>{title}</Modal.Header>
+            <Modal.Content>
+            {error && <Segment inverted color="red">{`Error: ${error}`}</Segment>}
+            <AddEntryForm onSubmit={onSubmit} onCancel={onClose} setModalTitle={setModalTitle} />
+            </Modal.Content>
+        </Modal>
+    );
 };
 
 export default AddEntryModal;
