@@ -12,7 +12,7 @@ const RepositoryItem = ({ repo }) => {
 
     return (
         <View style={styles.container}>
-            <View style={{ flexDirection: 'row', height: 140 }}>
+            <View style={{ flexDirection: 'row', minHeight: 140 }}>
                 <Image 
                     source={{
                         uri: `${repo.ownerAvatarUrl}`
