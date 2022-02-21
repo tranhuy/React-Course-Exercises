@@ -1,4 +1,4 @@
-import { View, Pressable, StyleSheet } from 'react-native-web';
+import { View, Pressable, StyleSheet } from 'react-native';
 import { Formik } from 'formik';
 import * as yup from 'yup'
 
