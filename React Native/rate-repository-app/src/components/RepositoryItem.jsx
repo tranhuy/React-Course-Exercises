@@ -19,7 +19,7 @@ const RepositoryItem = ({ repo }) => {
                     }}
                     style={styles.avatarImage}
                 />
-                <View style={{ flexDirection: 'column', justifyContent: 'space-around', padding: 20 }}>
+                <View style={{ flexDirection: 'column', flexShrink: 1, justifyContent: 'space-around', padding: 20 }}>
                     <Text fontSize='subheading' fontWeight='bold'>{repo.fullName}</Text>
                     <Text color='textSecondary'>{repo.description}</Text>
                     <Text style={styles.language}>{repo.language}</Text>
