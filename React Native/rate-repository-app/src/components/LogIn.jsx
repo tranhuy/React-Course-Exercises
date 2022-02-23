@@ -1,6 +1,9 @@
-import { View, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet, Alert } from 'react-native';
+import { useNavigate } from 'react-router-native';
 import { Formik } from 'formik';
 import * as yup from 'yup'
+
+import useSignIn from '../hooks/useSignIn';
 
 import Text from './Text';
 import FormikTextInput from './FormikTextInput';
@@ -11,8 +14,18 @@ const validationSchema = yup.object().shape({
 });
 
 const LogIn = () => {
-    const loginUser = credentials => {
-        console.log(credentials);
+    const [signInUser] = useSignIn();
+    const navigate = useNavigate();
+
+    const loginUser = async credentials => {
+        try {
+            const { data } = await signInUser(credentials);
+            console.log(data);
+            navigate('/', { replace: true });
+        } catch (e) {
+            console.log(e.message);
+            Alert.alert('AUTHENTICATION ERROR', e.message);
+        }
     }
     
     return (

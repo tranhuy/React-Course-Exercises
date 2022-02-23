@@ -1,5 +1,9 @@
 import { View, Pressable, Text, ScrollView, StyleSheet } from 'react-native';
-import { Link } from 'react-router-native';
+import { useNavigate } from 'react-router-native';
+
+import { useApolloClient } from '@apollo/client';
+import useAuthSorage from '../hooks/useAuthStorage';
+import useLoggedInUser from '../hooks/useLoggedInUser';
 
 import Constants from 'expo-constants';
 
@@ -25,24 +29,42 @@ const styles = StyleSheet.create({
   }
 });
 
-const Tab = ({ title, navPath }) => {
+const Tab = ({ title, action }) => {
+    const navigate = useNavigate();
+    const { navPath, callback } = action;
+
+    const handleOnPress = () => {
+        if (callback) {
+            callback();
+        }
+        navigate(navPath, { replace: true });
+    }
+
     return (
-        <Pressable>
-            <Link to={navPath}>
-                <View style={styles.tab}>
-                    <Text style={styles.text}>{title}</Text>
-                </View>            
-            </Link>            
+        <Pressable onPress={handleOnPress}>
+            <View style={styles.tab}>
+                <Text style={styles.text}>{title}</Text>
+            </View>                         
         </Pressable>
     );   
 };
 
 const AppBar = () => {
+  const { user: loggedInUser } = useLoggedInUser();
+  const authStorage = useAuthSorage();
+  const apolloClient = useApolloClient();
+
+  const logOutUser = async () => {
+    await authStorage.removeAccessToken();
+    apolloClient.resetStore();    
+  };
+  
+
   return (
     <View style={[styles.container]}>
         <ScrollView horizontal={true} contentContainerStyle={styles.scrollView}>
-            <Tab title='Repositories' navPath='/' />
-            <Tab title='Log In' navPath='/login' />
+            <Tab title='Repositories' action={{ navPath: '/' }} />
+            {loggedInUser ? <Tab title='Log Out' action={{ navPath: '/', callback: logOutUser }} /> : <Tab title='Log In' action={{ navPath: '/login' }} />}            
         </ScrollView>        
     </View>
   );
