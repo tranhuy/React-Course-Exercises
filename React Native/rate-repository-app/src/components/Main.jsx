@@ -3,6 +3,7 @@ import { Text, StyleSheet, View } from 'react-native';
 import { Navigate, Route, Routes } from 'react-router-native';
 
 import RepositoryList from './RepositoryList';
+import RepositoryItem from './RepositoryItem';
 import LogIn from './LogIn';
 import AppBar from './AppBar';
 
@@ -19,6 +20,7 @@ const Main = () => {
       <Routes>
           <Route path='/' exact element={<RepositoryList />} />
           <Route path='/login' exact element={<LogIn />} />
+          <Route path='/repo/:id' exact element={<RepositoryItem />} />
           <Route path='*' element={<Navigate to='/' replace />} />
       </Routes>     
     </View>

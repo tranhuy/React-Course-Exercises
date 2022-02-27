@@ -1,14 +1,33 @@
-import { View, Image, StyleSheet } from "react-native";
+import { View, Image, Pressable, Linking, StyleSheet } from "react-native";
+import { useState, useEffect } from "react";
+import { useParams } from 'react-router-native';
+import useRepository from "../hooks/useRepository";
 
 import Text from "./Text";
 
-const RepositoryItem = ({ repo }) => {
+const RepositoryItem = ({ repoItem }) => {
+    const { id } = useParams();
+    const [ repo, setRepo ] = useState(repoItem);
+    const [ getRepository ] = useRepository();
+
+    useEffect(async () => {
+        if (id) {
+            try {
+                const { data } = await getRepository(id);
+                setRepo(data.repository);
+            } catch (e) {
+                console.log(e.message);
+            }
+        }
+    }, []);
     
     const parseCount = (value) => {
         if (value < 1000) return value;
         
         return Math.round(Number(value)/1000 * 10)/10 + 'k';
     }
+
+    if (repo === undefined) return null;
 
     return (
         <View testID='repoItem' style={styles.container}>
@@ -43,6 +62,14 @@ const RepositoryItem = ({ repo }) => {
                     <Text color='textSecondary' align='center'>Rating</Text>
                 </View>
             </View>
+            {
+                repo.url && 
+                <View style={{ marginTop: 15 }}>
+                    <Pressable onPress={() => Linking.openURL(repo.url)}>
+                        <Text fontWeight='bold' fontSize='subheading' style={styles.openGibHubBtn}>Open in GitHub</Text>
+                    </Pressable>
+                </View>
+            }
         </View>
     )
 }
@@ -71,6 +98,13 @@ const styles = StyleSheet.create({
         width: 70,
         height: 70,
         borderRadius: 5
+    },
+    openGibHubBtn: {
+        backgroundColor: '#0365d0',
+        color: '#ffffff',
+        padding: 8,
+        borderRadius: 5,
+        textAlign: 'center',
     }
 })
 
