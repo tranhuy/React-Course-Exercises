@@ -1,17 +1,24 @@
-import { useLazyQuery } from '@apollo/client';
+import { useState, useEffect } from 'react';
+import { useQuery } from '@apollo/client';
 
 import { GET_REPOSITORY } from '../graphql/queries';
 
-const useRepository = () => {
-    const [ getRepo ] = useLazyQuery(GET_REPOSITORY);
+const useRepository = (id) => {
+    const [ repository, setRepository ] = useState();
+    const { loading, data } = useQuery(GET_REPOSITORY, {
+        variables: {
+            repositoryId: id,
+        },
+        fetchPolicy: 'cache-and-network',
+    });
 
-    const getRepository = async (repoId) => {
-        const result = await getRepo({ variables: { repositoryId: repoId }});
+    useEffect(() => {
+        if (data) {
+            setRepository(data.repository);
+        }
+    }, [data]);
 
-        return result;
-    }
-
-    return [ getRepository ];
+    return { repository, loading };
 }
 
 export default useRepository;

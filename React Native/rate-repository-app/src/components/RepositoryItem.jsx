@@ -1,33 +1,13 @@
 import { View, Image, Pressable, Linking, StyleSheet } from "react-native";
-import { useState, useEffect } from "react";
-import { useParams } from 'react-router-native';
-import useRepository from "../hooks/useRepository";
 
 import Text from "./Text";
 
-const RepositoryItem = ({ repoItem }) => {
-    const { id } = useParams();
-    const [ repo, setRepo ] = useState(repoItem);
-    const [ getRepository ] = useRepository();
-
-    useEffect(async () => {
-        if (id) {
-            try {
-                const { data } = await getRepository(id);
-                setRepo(data.repository);
-            } catch (e) {
-                console.log(e.message);
-            }
-        }
-    }, []);
-    
+const RepositoryItem = ({ repo }) => {
     const parseCount = (value) => {
         if (value < 1000) return value;
         
         return Math.round(Number(value)/1000 * 10)/10 + 'k';
     }
-
-    if (repo === undefined) return null;
 
     return (
         <View testID='repoItem' style={styles.container}>

@@ -24,7 +24,7 @@ export const RepositoryListContainer = ({ repositories }) => {
       <FlatList
           data={repositoryNodes}
           ItemSeparatorComponent={ItemSeparator}
-          renderItem={({ item }) => ( <Pressable onPress={() => navigate(`${baseUrl}/${item.id}`, { replace: true })}><RepositoryItem repoItem={item} /></Pressable> )}
+          renderItem={({ item }) => ( <Pressable onPress={() => navigate(`${baseUrl}/${item.id}`, { replace: true })}><RepositoryItem repo={item} /></Pressable> )}
           keyExtractor={item => item.id}
       />
     )
