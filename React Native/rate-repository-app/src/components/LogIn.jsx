@@ -1,7 +1,7 @@
 import { View, Pressable, StyleSheet, Alert } from 'react-native';
 import { useNavigate } from 'react-router-native';
 import { Formik } from 'formik';
-import * as yup from 'yup'
+import * as yup from 'yup';
 
 import useSignIn from '../hooks/useSignIn';
 

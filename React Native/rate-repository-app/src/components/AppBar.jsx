@@ -64,6 +64,7 @@ const AppBar = () => {
     <View style={[styles.container]}>
         <ScrollView horizontal={true} contentContainerStyle={styles.scrollView}>
             <Tab title='Repositories' action={{ navPath: '/' }} />
+            {!loggedInUser && <Tab title='Register' action={{ navPath: '/register' }} />}
             {loggedInUser && <Tab title='Create Review' action={{ navPath: '/review/create' }} />}
             {loggedInUser ? <Tab title='Log Out' action={{ navPath: '/', callback: logOutUser }} /> : <Tab title='Log In' action={{ navPath: '/login' }} />}            
         </ScrollView>        
