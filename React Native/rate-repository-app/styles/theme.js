@@ -8,7 +8,8 @@ const theme = {
         appBar: '#ffffff'
     },
     backColors: {
-        appBar: '#24292e'
+        appBar: '#24292e',
+        picker: '#dadcdd'
     },
     fontSizes: {
         body: 14,

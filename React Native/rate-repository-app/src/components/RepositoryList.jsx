@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { FlatList, View, Pressable, StyleSheet } from 'react-native';
 import { useNavigate } from 'react-router-native';
 
@@ -5,6 +6,7 @@ import { repositories } from '../../data/repositories';
 import useRepositories from '../hooks/useRepositories';
 
 import RepositoryItem from './RepositoryItem';
+import SortPicker, { lastestRepository } from './SortPicker';
 
 const styles = StyleSheet.create({
   separator: {
@@ -24,16 +26,31 @@ export const RepositoryListContainer = ({ repositories }) => {
       <FlatList
           data={repositoryNodes}
           ItemSeparatorComponent={ItemSeparator}
-          renderItem={({ item }) => ( <Pressable onPress={() => navigate(`${baseUrl}/${item.id}`, { replace: true })}><RepositoryItem repo={item} /></Pressable> )}
+          renderItem={({ item }) => (<Pressable onPress={() => navigate(`${baseUrl}/${item.id}`, { replace: true })}><RepositoryItem repo={item} /></Pressable>)}
           keyExtractor={item => item.id}
       />
     )
 }
 
 const RepositoryList = () => {
-    const { repositories } = useRepositories();
+    const [ sortCriteria, setSortCriteria ] = useState(lastestRepository);
+    const { repositories } = useRepositories(sortCriteria);
 
-    return <RepositoryListContainer repositories={repositories} />
+    const navigate = useNavigate();
+    const baseUrl = '/repo';
+    const repositoryNodes = repositories ? repositories.edges.map(edge => edge.node) : [];
+
+    return (
+      <FlatList
+          data={repositoryNodes}
+          ItemSeparatorComponent={ItemSeparator}
+          renderItem={({ item }) => (<Pressable onPress={() => navigate(`${baseUrl}/${item.id}`, { replace: true })}><RepositoryItem repo={item} /></Pressable>)}
+          keyExtractor={item => item.id}
+          ListHeaderComponent={() => <SortPicker sortBy={sortCriteria} setSortBy={setSortCriteria} />}
+      />
+    );
+
+    //return <RepositoryListContainer repositories={repositories} />
 };
 
 export default RepositoryList;
