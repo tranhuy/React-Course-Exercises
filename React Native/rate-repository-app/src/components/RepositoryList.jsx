@@ -1,6 +1,7 @@
 import { useState, Component } from 'react';
 import { FlatList, View, Pressable, StyleSheet } from 'react-native';
 import { useNavigate } from 'react-router-native';
+import { useDebounce } from 'use-debounce/lib';
 
 import { repositories } from '../../data/repositories';
 import useRepositories from '../hooks/useRepositories';
@@ -20,10 +21,9 @@ const ItemSeparator = () => <View style={styles.separator} />;
 class RepositoryListContainer extends Component {
   
   renderHeader = () => {
-    const { sortBy, setSortBy } = this.props;
 
     return (
-      <RepositoryListHeader sortBy={sortBy} setSortBy={setSortBy} />
+      <RepositoryListHeader {...this.props} />
     );
   };
 
@@ -47,9 +47,18 @@ class RepositoryListContainer extends Component {
 const RepositoryList = () => {
     const navigate = useNavigate();
     const [ sortCriteria, setSortCriteria ] = useState(lastestRepository);
-    const { repositories } = useRepositories(sortCriteria);
+    const [ searchCriteria, setSearchCriteria ] = useState('');
+    const [ debouncedSearch ] = useDebounce(searchCriteria, 500);
+    const { repositories } = useRepositories(sortCriteria, debouncedSearch);
 
-    return <RepositoryListContainer navigate={navigate} repositories={repositories} sortBy={sortCriteria} setSortBy={setSortCriteria} />
+    return <RepositoryListContainer 
+                navigate={navigate} 
+                repositories={repositories} 
+                sortBy={sortCriteria} 
+                setSortBy={setSortCriteria} 
+                search={searchCriteria}
+                setSearch={setSearchCriteria}
+            />
 };
 
 export default RepositoryList;

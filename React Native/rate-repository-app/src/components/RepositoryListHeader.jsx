@@ -1,15 +1,30 @@
-import { StyleSheet } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import { Searchbar } from 'react-native-paper';
 
 import theme from "../../styles/theme";
 
 const styles = StyleSheet.create({
-    picker: {
+    container: {
+        backgroundColor: '#dadcdd',
         padding: 14,
+    },
+    picker: {      
+        backgroundColor: '#dadcdd',
         fontSize: theme.fontSizes.subheading,
-        backgroundColor: theme.backColors.picker,
         borderWidth: 0
     },
+    searchBar: {
+        height: 35,
+        marginBottom: Platform.select({
+            android: 0,
+            ios: 0,
+            default: 20
+        }),
+    },
+    searchBarText: {
+        fontSize: theme.fontSizes.subheading
+    }
 });
 
 export const lastestRepository = {
@@ -27,18 +42,27 @@ export const lowestRated = {
     orderDirection: 'ASC'
 }
 
-const RepositoryListHeader = ({ sortBy, setSortBy }) => {
+const RepositoryListHeader = ({ sortBy, setSortBy, search, setSearch }) => {
     return (
-        <Picker
-            selectedValue={JSON.stringify(sortBy)}
-            onValueChange={val => setSortBy(JSON.parse(val))}
-            style={styles.picker}
-        >            
-            <Picker.Item label='Select an item...' enabled={false} />
-            <Picker.Item label='Latest repositories' value={JSON.stringify(lastestRepository)} />
-            <Picker.Item label='Highest rated repositories' value={JSON.stringify(highestRated)} />
-            <Picker.Item label='Lowest rated repositories' value={JSON.stringify(lowestRated)} />            
-        </Picker>
+        <View style={styles.container}>
+            <Searchbar
+                placeholder="Search by repo or owner name"
+                onChangeText={setSearch}
+                value={search}
+                style={styles.searchBar}
+                inputStyle={styles.searchBarText}
+            />
+            <Picker
+                selectedValue={JSON.stringify(sortBy)}
+                onValueChange={val => setSortBy(JSON.parse(val))}
+                style={styles.picker}
+            >            
+                <Picker.Item label='Select an item...' enabled={false} />
+                <Picker.Item label='Latest repositories' value={JSON.stringify(lastestRepository)} />
+                <Picker.Item label='Highest rated repositories' value={JSON.stringify(highestRated)} />
+                <Picker.Item label='Lowest rated repositories' value={JSON.stringify(lowestRated)} />            
+            </Picker>
+        </View>
     );
 }
 
