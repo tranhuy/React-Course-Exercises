@@ -27,7 +27,7 @@ export const lowestRated = {
     orderDirection: 'ASC'
 }
 
-const SortPicker = ({ sortBy, setSortBy }) => {
+const RepositoryListHeader = ({ sortBy, setSortBy }) => {
     return (
         <Picker
             selectedValue={JSON.stringify(sortBy)}
@@ -42,5 +42,5 @@ const SortPicker = ({ sortBy, setSortBy }) => {
     );
 }
 
-export default SortPicker;
+export default RepositoryListHeader;
 
