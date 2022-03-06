@@ -64,11 +64,16 @@ const ReviewItem = ({ review }) => {
 
 const SingleRepository = () => {
     const { id } = useParams();
-    const { repository } = useRepository(id);
+    const { repository, fetchMore } = useRepository({ id, first: 5 });
     const reviews = repository ? repository.reviews.edges.map(edge => edge.node): [];
 
     if (!repository) {
         return null;
+    }
+
+    const loadMoreReviews = () => {
+        console.log('Fetching more reviews');
+        fetchMore();
     }
 
     return (
@@ -78,6 +83,8 @@ const SingleRepository = () => {
             ItemSeparatorComponent={ItemSeparator}
             keyExtractor={({ id }) => id}
             ListHeaderComponent={() => <RepositoryInfo repository={repository} />}
+            onEndReached={loadMoreReviews}
+            onEndReachedThreshold={0.3}
         />
     );
 }

@@ -47,8 +47,8 @@ const RepositoryListHeader = ({ sortBy, setSortBy, search, setSearch }) => {
         <View style={styles.container}>
             <Searchbar
                 placeholder="Search by repo or owner name"
-                onChangeText={setSearch}
-                value={search}
+                onChangeText={(val) => setSearch({ searchKeyword: val })}
+                value={search.searchKeyword}
                 style={styles.searchBar}
                 inputStyle={styles.searchBarText}
             />

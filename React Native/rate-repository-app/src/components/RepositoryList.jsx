@@ -29,7 +29,7 @@ class RepositoryListContainer extends Component {
 
   render() {
     const baseUrl = '/repo';
-    const { repositories, navigate } = this.props;
+    const { repositories, navigate, onEndReach } = this.props;
     const repositoryNodes = repositories ? repositories.edges.map(edge => edge.node) : [];
 
     return (
@@ -39,6 +39,8 @@ class RepositoryListContainer extends Component {
           renderItem={({ item }) => (<Pressable onPress={() => navigate(`${baseUrl}/${item.id}`, { replace: true })}><RepositoryItem repo={item} /></Pressable>)}
           keyExtractor={item => item.id}
           ListHeaderComponent={this.renderHeader}
+          onEndReached={onEndReach}
+          onEndReachedThreshold={0.5}
       />
     );
   }
@@ -47,17 +49,23 @@ class RepositoryListContainer extends Component {
 const RepositoryList = () => {
     const navigate = useNavigate();
     const [ sortCriteria, setSortCriteria ] = useState(lastestRepository);
-    const [ searchCriteria, setSearchCriteria ] = useState('');
-    const [ debouncedSearch ] = useDebounce(searchCriteria, 500);
-    const { repositories } = useRepositories(sortCriteria, debouncedSearch);
+    const [ searchCriteria, setSearchCriteria ] = useState({ searchKeyword: '' });
+    const [ debouncedSearch ] = useDebounce(searchCriteria, 400);
+    const { repositories, fetchMore } = useRepositories({ ...sortCriteria, ...debouncedSearch, first: 6 });
+
+    const loadMoreRepos = () => {
+      console.log('Fetching more repositories');
+      fetchMore();
+    }
 
     return <RepositoryListContainer 
                 navigate={navigate} 
-                repositories={repositories} 
+                repositories={repositories}
                 sortBy={sortCriteria} 
                 setSortBy={setSortCriteria} 
                 search={searchCriteria}
                 setSearch={setSearchCriteria}
+                onEndReach={loadMoreRepos}
             />
 };
 
