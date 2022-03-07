@@ -1,11 +1,9 @@
-import { useParams } from 'react-router-native';
-import { FlatList, View, StyleSheet } from "react-native";
+import { View, FlatList, StyleSheet } from "react-native";
 import * as Utils from "../utils/utils";
 
-import useRepository from "../hooks/useRepository";
-
-import RepositoryItem from "./RepositoryItem";
 import Text from "./Text";
+
+import useLoggedInUser from "../hooks/useLoggedInUser";
 
 const styles = StyleSheet.create({
     separator: {
@@ -32,10 +30,6 @@ const styles = StyleSheet.create({
 
 const ItemSeparator = () => <View style={styles.separator} />;
 
-const RepositoryInfo = ({ repository }) => {
-    return <RepositoryItem repo={repository} />;
-}
-
 const ReviewItem = ({ review }) => {
     return (
         <View style={styles.container}>
@@ -44,7 +38,7 @@ const ReviewItem = ({ review }) => {
             </View>
             <View style={styles.reviewText}>
                 <View>
-                    <Text fontWeight='bold'>{review.user.username}</Text>
+                    <Text fontWeight='bold'>{review.repository.fullName}</Text>
                 </View>
                 <View>
                     <Text color='textSecondary'>{Utils.formatDate(review.createdAt)}</Text>
@@ -57,31 +51,18 @@ const ReviewItem = ({ review }) => {
     );
 }
 
-const SingleRepository = () => {
-    const { id } = useParams();
-    const { repository, fetchMore } = useRepository({ id, first: 5 });
-    const reviews = repository ? repository.reviews.edges.map(edge => edge.node): [];
-
-    if (!repository) {
-        return null;
-    }
-
-    const loadMoreReviews = () => {
-        console.log('Fetching more reviews');
-        fetchMore();
-    }
+const MyReviews = () => {
+    const { user } = useLoggedInUser(true);   
+    const reviews = user?.reviews.edges.map(edge => edge.node);
 
     return (
-        <FlatList 
+        <FlatList
             data={reviews}
             renderItem={({ item }) => <ReviewItem review={item} />}
             ItemSeparatorComponent={ItemSeparator}
             keyExtractor={({ id }) => id}
-            ListHeaderComponent={() => <RepositoryInfo repository={repository} />}
-            onEndReached={loadMoreReviews}
-            onEndReachedThreshold={0.3}
         />
     );
 }
 
-export default SingleRepository;
+export default MyReviews;
