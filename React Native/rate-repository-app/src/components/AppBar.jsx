@@ -1,5 +1,6 @@
 import { View, Pressable, Text, ScrollView, StyleSheet } from 'react-native';
 import { useNavigate } from 'react-router-native';
+import { useRef, useEffect } from 'react';
 
 import { useApolloClient } from '@apollo/client';
 import useAuthSorage from '../hooks/useAuthStorage';
@@ -53,16 +54,21 @@ const AppBar = () => {
   const { user: loggedInUser } = useLoggedInUser();
   const authStorage = useAuthSorage();
   const apolloClient = useApolloClient();
+  const scrollViewRef = useRef();
 
   const logOutUser = async () => {
     await authStorage.removeAccessToken();
     apolloClient.resetStore();    
+    
   };
-  
+
+  useEffect(() => {
+    scrollViewRef.current?.scrollTo({ x: 0 });
+  }, [ loggedInUser ]);
 
   return (
     <View style={[styles.container]}>
-        <ScrollView horizontal={true} contentContainerStyle={styles.scrollView}>
+        <ScrollView horizontal={true} contentContainerStyle={styles.scrollView} ref={scrollViewRef}>
             <Tab title='Repositories' action={{ navPath: '/' }} />
             {!loggedInUser && <Tab title='Register' action={{ navPath: '/register' }} />}
             {loggedInUser && <Tab title='Create Review' action={{ navPath: '/review/create' }} />}
